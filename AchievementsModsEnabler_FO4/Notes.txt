@@ -1,0 +1,44 @@
+This appears to be the code that gets called when the player is going to be awarded an achievement, however there is a mod detection check here. 
+(seems to be comparing against a plugin whitelist)
+
+Disassembly:
+00007FF7413CCBA0 | 48 89 5C 24 08              | MOV QWORD PTR SS:[RSP+8],RBX                         |
+00007FF7413CCBA5 | 57                          | PUSH RDI                                             |
+00007FF7413CCBA6 | 48 81 EC 40 04 00 00        | SUB RSP,440                                          |
+00007FF7413CCBAD | 48 8B D9                    | MOV RBX,RCX                                          |
+00007FF7413CCBB0 | 4C 8D 05 B9 3C 8F 01        | LEA R8,QWORD PTR DS:[7FF742CC0870]                   | 7FF742CC0870:"*Achievement %d awarded - a winnar is you!*"
+00007FF7413CCBB7 | 48 8D 4C 24 40              | LEA RCX,QWORD PTR SS:[RSP+40]                        |
+00007FF7413CCBBC | BA 00 04 00 00              | MOV EDX,400                                          |
+00007FF7413CCBC1 | 41 8B F9                    | MOV EDI,R9D                                          |
+00007FF7413CCBC4 | E8 37 34 CE FE              | CALL fallout4debug.7FF7400B0000                      |
+00007FF7413CCBC9 | 48 8D 4C 24 20              | LEA RCX,QWORD PTR SS:[RSP+20]                        |
+00007FF7413CCBCE | E8 3D 7D 27 01              | CALL fallout4debug.7FF742644910                      |
+00007FF7413CCBD3 | 48 8D 05 A6 4E 8E 01        | LEA RAX,QWORD PTR DS:[7FF742CB1A80]                  |
+00007FF7413CCBDA | 48 8D 4C 24 30              | LEA RCX,QWORD PTR SS:[RSP+30]                        |
+00007FF7413CCBDF | 48 89 44 24 20              | MOV QWORD PTR SS:[RSP+20],RAX                        |
+00007FF7413CCBE4 | 48 8D 44 24 40              | LEA RAX,QWORD PTR SS:[RSP+40]                        |
+00007FF7413CCBE9 | 48 89 44 24 28              | MOV QWORD PTR SS:[RSP+28],RAX                        | [rsp+28]:EntryPoint
+00007FF7413CCBEE | E8 AD 36 77 00              | CALL fallout4debug.7FF741B402A0                      |
+00007FF7413CCBF3 | 48 8B 03                    | MOV RAX,QWORD PTR DS:[RBX]                           |
+00007FF7413CCBF6 | 48 8D 54 24 20              | LEA RDX,QWORD PTR SS:[RSP+20]                        |
+00007FF7413CCBFB | 45 33 C0                    | XOR R8D,R8D                                          |
+00007FF7413CCBFE | 48 8B CB                    | MOV RCX,RBX                                          |
+00007FF7413CCC01 | FF 90 E8 01 00 00           | CALL QWORD PTR DS:[RAX+1E8]                          |
+00007FF7413CCC07 | 48 8D 4C 24 30              | LEA RCX,QWORD PTR SS:[RSP+30]                        |
+00007FF7413CCC0C | E8 4F 38 77 00              | CALL fallout4debug.7FF741B40460                      |
+00007FF7413CCC11 | 48 8D 4C 24 20              | LEA RCX,QWORD PTR SS:[RSP+20]                        |
+00007FF7413CCC16 | E8 15 7D 27 01              | CALL fallout4debug.7FF742644930                      |
+00007FF7413CCC1B | 48 8B 0D DE 93 3B 04        | MOV RCX,QWORD PTR DS:[7FF745786000]                  |
+00007FF7413CCC22 | B2 01                       | MOV DL,1                                             |
+00007FF7413CCC24 | E8 67 6E DB FE              | CALL fallout4debug.7FF740183A90                      | - The mods detection check itself.
+00007FF7413CCC29 | 84 C0                       | TEST AL,AL                                           | 
+00007FF7413CCC2B | 75 11                       | JNE fallout4debug.7FF7413CCC3E                       | - Jumps if mods are detected, skipping the awarding process. This is what I patch out (along with TEST AL,AL).
+00007FF7413CCC2D | E8 3E F2 0B 00              | CALL fallout4debug.7FF74148BE70                      |
+00007FF7413CCC32 | 8B D7                       | MOV EDX,EDI                                          |
+00007FF7413CCC34 | 4C 8B 00                    | MOV R8,QWORD PTR DS:[RAX]                            |
+00007FF7413CCC37 | 48 8B C8                    | MOV RCX,RAX                                          |
+00007FF7413CCC3A | 41 FF 50 28                 | CALL QWORD PTR DS:[R8+28]                            |
+00007FF7413CCC3E | 48 8B 9C 24 50 04 00 00     | MOV RBX,QWORD PTR SS:[RSP+450]                       |
+00007FF7413CCC46 | 48 81 C4 40 04 00 00        | ADD RSP,440                                          |
+00007FF7413CCC4D | 5F                          | POP RDI                                              |
+00007FF7413CCC4E | C3                          | RET                                                  |
