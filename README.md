@@ -1,4 +1,4 @@
-##[PC] [WIPz] SteelSeries GameSense Plugin - Fallout 4
+##[PC] [WIPz] Achievements Mods Enabler - Fallout 4
 
 **What is this?**
 
