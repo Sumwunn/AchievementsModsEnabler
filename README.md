@@ -12,7 +12,7 @@ It's designed to be version independent.
 
 **How to install**
 
-1. Copy the Plugin folders contents to Fallout 4's root folder.
+1. Copy the Plugin folder's contents to Fallout 4's root folder.
 
 2. Play!
 
