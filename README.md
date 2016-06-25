@@ -2,7 +2,7 @@
 
 **What is this?**
 
-It's a plugin I made that allows re-enables achievements while using mods by patching Fallout4.exe during runtime.
+It's a plugin I made that re-enables achievements while using mods by patching Fallout4.exe during runtime.
 It's designed to be version independent.
 
 **What's in the download?**
