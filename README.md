@@ -21,12 +21,14 @@ It's designed to be version independent.
 1. Delete DllLoader.txt, X3DAudio1_7.dll & AchievementsModsEnabler_FO4.dll from Fallout 4's root folder.
 
 **Will it need updating?**
+
 Probably not! I've designed this to be version independent.
 However in the case that it does, I will have it fixed very quickly.
 Below is a list of Fallout 4 versions that have been tested and working.
 
 **How do I know if it's working?**
-Go to your Fallout4 folder in My Games. There's a log file called: AchievementsModsEnabler_FO4.log
+
+In your Fallout4 folder in My Games. There's a log file called: AchievementsModsEnabler_FO4.log
 It will either say "YES" or "NO". Indicating whether or not the plugin successfully found and patched what is needed to be.
 So if it says NO, lemme know!
 
