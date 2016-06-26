@@ -27,7 +27,7 @@ Probably not! I've designed this to be version independent.
 However in the case that it does, I will have it fixed very quickly.
 Below is a list of Fallout 4 versions that have been tested and working.
 
-**Tested & working versions**
+**Tested & working versions:**
 
 v1.5.416.0
 
