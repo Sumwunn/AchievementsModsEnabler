@@ -36,7 +36,7 @@ In your Fallout4 folder in My Games. There's a log file called: AchievementsMods
 It will either say "YES" or "NO". Indicating whether or not the plugin successfully found and patched what is needed to be.
 So if it says NO, lemme know!
 
-**Discussion**: 
+**Discussion**: https://community.bethesda.net/thread/42550
 
 **Compile Notes**
 
