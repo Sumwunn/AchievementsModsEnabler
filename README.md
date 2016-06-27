@@ -27,15 +27,15 @@ Probably not! I've designed this to be version independent.
 However in the case that it does, I will have it fixed very quickly.
 Below is a list of Fallout 4 versions that have been tested and working.
 
-**Tested & working versions:**
-
-v1.5.416.0
-
 **How do I know if it's working?**
 
 In your Fallout4 folder in My Games. There's a log file called: AchievementsModsEnabler_FO4.log
 It will either say "YES" or "NO". Indicating whether or not the plugin successfully found and patched what is needed to be.
 So if it says NO, lemme know!
+
+**Tested & working versions:**
+
+v1.5.416.0
 
 **Discussion**: https://community.bethesda.net/thread/42550
 
