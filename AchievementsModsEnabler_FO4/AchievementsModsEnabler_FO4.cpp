@@ -21,9 +21,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 
 #include "stdafx.h"
 #include <windows.h>
-#include <ShlObj.h>
-#include <stdio.h>
-#include <tchar.h>
+#include <fstream>
+#include <iostream>
+#include <string>
 
 // Defined functions.
 // ASM.
@@ -32,12 +32,16 @@ extern "C" void* BinSearch(void* Search, int SearchLength, unsigned char* Bytes,
 extern "C" void* GetTextSectionAddr(HMODULE Module, int DataType);
 extern "C" int GetTextSectionSize(HMODULE Module, int DataType);
 
-int Setup() {
+// Return values
+// -1 = Process is NOT Fallout4.exe.
+// -2 = Log file creation failed.
+
+extern "C" __declspec(dllexport) int Setup() {
 
 	// These bytes will land us just beneath where the achivements mods disabler code is at.
-	unsigned char BytesToFind[20] = { 0x8B, 0xD7, 0x4C, 0x8B, 0x00, 0x48, 0x8B, 0xC8, 0x41, 0xFF, 0x50, 0x28, 0x48, 0x8B, 0x9C, 0x24, 0x50, 0x04, 0x00, 0x00 };
+	unsigned char BytesToFind[] = { 0x8B, 0xD7, 0x4C, 0x8B, 0x00, 0x48, 0x8B, 0xC8, 0x41, 0xFF, 0x50, 0x28, 0x48, 0x8B, 0x9C, 0x24, 0x50, 0x04, 0x00, 0x00 };
 	// This is what we patch it with (check notes.txt).
-	unsigned char BytesPatch[4] = { 0x90, 0x90, 0x90, 0x90 };
+	unsigned char BytesPatch[] = { 0x90, 0x90, 0x90, 0x90 };
 	// The address we get from GetTextSectionAddr.
 	void* SearchAddress = (void*)NULL;
 	// The size too.
@@ -49,7 +53,7 @@ int Setup() {
 	// Misc.
 	DWORD OldVP = NULL;
 
-	//////// Setup Part 1 - Addresses ////////
+	//////// Setup Part 1 - Addresses & Logging ////////
 
 	// Get module of target to writes hooks to.
 	HMODULE TargetModule = GetModuleHandle(L"Fallout4.exe");
@@ -58,17 +62,13 @@ int Setup() {
 		return -1;
 	}
 
-	// Setup Log.
-	PWSTR LogPathPTR = NULL;
-	TCHAR LogPath[MAX_PATH];
-	FILE *pLogFile = NULL;
-
-	// Get log path.
-	SHGetKnownFolderPath(FOLDERID_Documents, NULL, NULL, &LogPathPTR);
-	_tcscpy_s(LogPath, MAX_PATH, LogPathPTR);
-	_tcscat_s(LogPath, MAX_PATH, L"\\My Games\\Fallout4\\AchievementsModsEnabler_FO4.log");
 	// Open up fresh log file.
-	_tfopen_s(&pLogFile, LogPath, L"w+");
+	std::ofstream LogFile;
+	LogFile.open("AchievementsModsEnabler_FO4.log");
+	// Log file creation failed.
+	if (!LogFile) {
+		return -2;
+	}
 
 	// Get size and address of Fallout4.exe's .text section.
 	SearchSize = GetTextSectionSize(TargetModule, 1);
@@ -79,7 +79,7 @@ int Setup() {
 	// Bytes not found!
 	if (PatchAddress == NULL) {
 		// Log message.
-		_fputts(L"NO", pLogFile);
+		LogFile << "NO" << std::endl;
 	}
 	// Bytes found!
 	else {
@@ -88,10 +88,11 @@ int Setup() {
 		memcpy(PatchAddress, BytesPatch, sizeof BytesPatch);
 		VirtualProtect(PatchAddress, sizeof BytesPatch, OldVP, &OldVP);
 		// Log message.
-		_fputts(L"YES", pLogFile);
+		LogFile << "YES" << std::endl;
 	}
+
 	// Cleanup.
-	fclose(pLogFile);
+	LogFile.close();
 
 	return 0;
 }
