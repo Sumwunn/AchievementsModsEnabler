@@ -35,8 +35,8 @@ So if it says NO, lemme know!
 
 **Tested & working versions:**
 
-v1.5.416.0
-v1.6.3.0
+* v1.5.416.0
+* v1.6.3.0
 
 **Discussion**: https://community.bethesda.net/thread/42550
 
