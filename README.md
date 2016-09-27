@@ -44,7 +44,7 @@ So if it says NO, lemme know!
 - 1.7.12.0
 - 1.7.15.0
 
-**Discussion**: https://community.bethesda.net/thread/42550
+**Discussion**: https://community.bethesda.net/thread/42550 & http://www.nexusmods.com/fallout4/mods/15639/?
 
 **Compile Notes**
 
