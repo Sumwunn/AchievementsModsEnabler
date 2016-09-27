@@ -35,6 +35,7 @@ So if it says NO, lemme know!
 
 **Tested & working versions:**
 
+- 1.5.416.0
 - 1.6.3.0
 - 1.6.9.0
 - 1.7.7.0
