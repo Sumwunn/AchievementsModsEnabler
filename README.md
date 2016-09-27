@@ -35,13 +35,13 @@ So if it says NO, lemme know!
 
 **Tested & working versions:**
 
-*1.6.3.0
-*1.6.9.0
-*1.7.7.0
-*1.7.9.0
-*1.7.10.0
-*1.7.12.0
-*1.7.15.0
+- 1.6.3.0
+- 1.6.9.0
+- 1.7.7.0
+- 1.7.9.0
+- 1.7.10.0
+- 1.7.12.0
+- 1.7.15.0
 
 **Discussion**: https://community.bethesda.net/thread/42550
 
