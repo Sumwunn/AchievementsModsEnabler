@@ -50,7 +50,7 @@ So if it says NO, lemme know!
 
 Fallout 4: http://www.nexusmods.com/fallout4/mods/15639/?
 
-Skyrim SE: http://www.nexusmods.com/fallout4/mods/15639/?
+Skyrim SE: 
 
 **Compile Notes**
 
