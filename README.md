@@ -33,7 +33,7 @@ In your Fallout4/SkyrimSE folder in My Games. There's a log file called: Achieve
 It will either say "YES" or "NO". Indicating whether or not the plugin successfully found and patched what is needed to be.
 So if it says NO, lemme know!
 
-**Fallout 4 Tested & working versions:**
+**Fallout 4 tested & working versions:**
 
 - 1.5.416.0
 - 1.6.3.0
@@ -44,7 +44,7 @@ So if it says NO, lemme know!
 - 1.7.12.0
 - 1.7.15.0
 
-**Skyrim SE Tested & working versions:**
+**Skyrim SE tested & working versions:**
 
 **Discussion**: 
 
