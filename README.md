@@ -61,7 +61,7 @@ Skyrim SE: http://www.nexusmods.com/skyrimspecialedition/mods/245/?
 **NOTES**
 
 - Written in C++/ASM (Visual Studio 2015 & HJWasm).
-- The Dll loader can actually be used to load any dll into Fallout 4 or the Creation Kit. (edit DllLoader.txt for Fallout4.exe and ???.exe)
+- The Dll loader can actually be used to load any dll into Fallout 4 or the Creation Kit. (edit DllLoader.txt for Fallout4.exe and SkyrimSE.exe)
 - If you so happen to be using my SteelSeries plugin, be sure to combine the contents of DllLoader.txt so both mods load.
 - If loading up a pre-modded save, the game will still warn you about achievements being disabled, you can ignore this, achievements will still work.
 
