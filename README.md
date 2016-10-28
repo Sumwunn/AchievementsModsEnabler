@@ -6,30 +6,27 @@ It's a plugin I made that re-enables achievements while using mods by patching F
 It's designed to be version independent.
 It also works on already modded saves!
 
-**What's in the download?**
-
-- Plugin folder which contains the plugin itself along with its dll loader.
-- Copy of this thread in a readme & licenses.
-
 **How to install**
 
-1. Copy the Plugin folder's contents to Fallout 4/SkyrimSE's root folder.
+1. Copy all the files from the download to Fallout 4/SkyrimSE's root folder.
 
-2. Play!
+2. Read the notes.
+
+3. Play (you may need to restart Steam for the mod to work).
 
 **How to uninstall**
 
-1. Delete DllLoader.txt, X3DAudio1_7.dll & AchievementsModsEnabler.dll from Fallout 4/SkyrimSE's root folder.
+1. Delete DllLoader.txt, AchievementsModsEnabler.dll_Exports.txt, X3DAudio1_7.dll & AchievementsModsEnabler.dll from Fallout 4's/Skyrim SE's root folder.
 
 **Will it need updating?**
 
 Probably not! I've designed this to be version independent.
 However in the case that it does, I will have it fixed very quickly.
-Below is a list of Fallout 4 versions that have been tested and working.
+Below is a list of Fallout 4 & Skyrim SE versions that have been tested and working.
 
 **How do I know if it's working?**
 
-In your Fallout4/SkyrimSE folder in My Games. There's a log file called: AchievementsModsEnabler.log
+In your Fallout4/Skyrim SE folder in My Games. There's a log file called: AchievementsModsEnabler.log
 It will either say "YES" or "NO". Indicating whether or not the plugin successfully found and patched what is needed to be.
 So if it says NO, lemme know!
 
@@ -60,10 +57,14 @@ Skyrim SE: http://www.nexusmods.com/skyrimspecialedition/mods/245/?
 
 **NOTES**
 
+- If loading up a non-modded (AKA vanilla) save, the game will still warn you about achievements being disabled, you can ignore this, achievements will still work.
+- Modded saves will still appear modded when using my mod, so you can still tell the difference between saves.
+- Achievements are baked into the saves. So any achievement that you would of gotten most likely won't be obtainable unless you load an earlier save or start again.
+- If the mod is not working, try restarting Steam and/or your computer.
+- This is NOT NMM compatible. It must be installed manually.
+- This does not use SKSE. It will also not conflict with it.
 - Written in C++/ASM (Visual Studio 2015 & HJWasm).
-- The Dll loader can actually be used to load any dll into Fallout 4 or the Creation Kit. (edit DllLoader.txt for Fallout4.exe and SkyrimSE.exe)
-- If you so happen to be using my SteelSeries plugin, be sure to combine the contents of DllLoader.txt so both mods load.
-- If loading up a pre-modded save, the game will still warn you about achievements being disabled, you can ignore this, achievements will still work.
+- The Dll loader can actually be used to load any dll into Skyrim SE.
 
 **CREDITS**
 
