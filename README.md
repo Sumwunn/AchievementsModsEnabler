@@ -46,11 +46,13 @@ So if it says NO, lemme know!
 
 **Skyrim SE tested & working versions:**
 
+- 1.1.47.0.8
+
 **Discussion**: 
 
 Fallout 4: http://www.nexusmods.com/fallout4/mods/15639/?
 
-Skyrim SE: 
+Skyrim SE: http://www.nexusmods.com/skyrimspecialedition/mods/245/?
 
 **Compile Notes**
 
