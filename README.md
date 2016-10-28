@@ -1,4 +1,4 @@
-##[PC] [WIPz] Achievements Mods Enabler - Fallout 4 & Skyrim SE
+##[PC] Achievements Mods Enabler - Fallout 4 & Skyrim SE
 
 **What is this?**
 
