@@ -40,9 +40,9 @@ extern "C" __declspec(dllexport) int Setup() {
 
 	LPCTSTR ExpectedProcess01 = L"Fallout4.exe";
 	// These bytes will land us just beneath where the achivements mods disabler code is at.
-	unsigned char BytesToFind01[] = { 0x8B, 0xD7, 0x4C, 0x8B, 0x00, 0x48, 0x8B, 0xC8, 0x41, 0xFF, 0x50, 0x28, 0x48, 0x8B, 0x9C, 0x24, 0x50, 0x04, 0x00, 0x00 };
+	unsigned char BytesToFind01[] = { 0xC3, 0x40, 0x32, 0xFF, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48 };
 	// This is what we patch it with (check notes.txt).
-	unsigned char BytesPatch01[] = { 0x90, 0x90, 0x90, 0x90 };
+	unsigned char BytesPatch01[] = { 0xB0, 0x00, 0xC3 };
 
 	LPCTSTR ExpectedProcess02 = L"SkyrimSE.exe";
 	// These bytes will land us just beneath where the achivements mods disabler code is at.
@@ -64,7 +64,7 @@ extern "C" __declspec(dllexport) int Setup() {
 	void* PatchAddress = (void*)NULL;
 	// We need to go back 9 bytes so we land at the right address.
 	int PatchAddressModifier = NULL;
-	int PatchAddressModifier01 = 9; // Fallout 4.
+	int PatchAddressModifier01 = 0x29; // Fallout 4.
 	int PatchAddressModifier02 = 0x35; // Skyrim SE.
 
 	// Misc.
