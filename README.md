@@ -44,6 +44,7 @@ So if it says NO, lemme know!
 **Skyrim SE tested & working versions:**
 
 - 1.1.47.0.8
+- 1.1.51.0.8
 
 **Discussion**: 
 
