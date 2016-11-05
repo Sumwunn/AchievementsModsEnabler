@@ -58,12 +58,12 @@ Skyrim SE: http://www.nexusmods.com/skyrimspecialedition/mods/245/?
 
 **NOTES**
 
-- If loading up a non-modded (AKA vanilla) save, the game will still warn you about achievements being disabled, you can ignore this, achievements will still work.
-- Modded saves will still appear modded when using my mod, so you can still tell the difference between saves.
 - Achievements are baked into the saves. So any achievement that you would of gotten most likely won't be obtainable unless you load an earlier save or start again.
+- If your save is already modded, you'll have to save again to order for the [M] to disappear.
+- This will not get you VAC banned in any manner as Fallout 4/Skyrim SE does not use any anti-cheat.
 - If the mod is not working, try restarting Steam and/or your computer.
 - This is NOT NMM compatible. It must be installed manually.
-- This does not use SKSE. It will also not conflict with it.
+- This does not use F4SE/SKSE. It will also not conflict with it.
 - Written in C++/ASM (Visual Studio 2015 & HJWasm).
 - The Dll loader can actually be used to load any dll into Skyrim SE.
 
