@@ -1,44 +1,125 @@
-This appears to be the code that gets called when the player is going to be awarded an achievement, however there is a mod detection check here. 
-(seems to be comparing against a plugin whitelist)
+Seems to be a plugin whitelist check. Any mods detected and it returns TRUE.
 
-Disassembly:
-00007FF7413CCBA0 | 48 89 5C 24 08              | MOV QWORD PTR SS:[RSP+8],RBX                         |
-00007FF7413CCBA5 | 57                          | PUSH RDI                                             |
-00007FF7413CCBA6 | 48 81 EC 40 04 00 00        | SUB RSP,440                                          |
-00007FF7413CCBAD | 48 8B D9                    | MOV RBX,RCX                                          |
-00007FF7413CCBB0 | 4C 8D 05 B9 3C 8F 01        | LEA R8,QWORD PTR DS:[7FF742CC0870]                   | 7FF742CC0870:"*Achievement %d awarded - a winnar is you!*"
-00007FF7413CCBB7 | 48 8D 4C 24 40              | LEA RCX,QWORD PTR SS:[RSP+40]                        |
-00007FF7413CCBBC | BA 00 04 00 00              | MOV EDX,400                                          |
-00007FF7413CCBC1 | 41 8B F9                    | MOV EDI,R9D                                          |
-00007FF7413CCBC4 | E8 37 34 CE FE              | CALL fallout4debug.7FF7400B0000                      |
-00007FF7413CCBC9 | 48 8D 4C 24 20              | LEA RCX,QWORD PTR SS:[RSP+20]                        |
-00007FF7413CCBCE | E8 3D 7D 27 01              | CALL fallout4debug.7FF742644910                      |
-00007FF7413CCBD3 | 48 8D 05 A6 4E 8E 01        | LEA RAX,QWORD PTR DS:[7FF742CB1A80]                  |
-00007FF7413CCBDA | 48 8D 4C 24 30              | LEA RCX,QWORD PTR SS:[RSP+30]                        |
-00007FF7413CCBDF | 48 89 44 24 20              | MOV QWORD PTR SS:[RSP+20],RAX                        |
-00007FF7413CCBE4 | 48 8D 44 24 40              | LEA RAX,QWORD PTR SS:[RSP+40]                        |
-00007FF7413CCBE9 | 48 89 44 24 28              | MOV QWORD PTR SS:[RSP+28],RAX                        | [rsp+28]:EntryPoint
-00007FF7413CCBEE | E8 AD 36 77 00              | CALL fallout4debug.7FF741B402A0                      |
-00007FF7413CCBF3 | 48 8B 03                    | MOV RAX,QWORD PTR DS:[RBX]                           |
-00007FF7413CCBF6 | 48 8D 54 24 20              | LEA RDX,QWORD PTR SS:[RSP+20]                        |
-00007FF7413CCBFB | 45 33 C0                    | XOR R8D,R8D                                          |
-00007FF7413CCBFE | 48 8B CB                    | MOV RCX,RBX                                          |
-00007FF7413CCC01 | FF 90 E8 01 00 00           | CALL QWORD PTR DS:[RAX+1E8]                          |
-00007FF7413CCC07 | 48 8D 4C 24 30              | LEA RCX,QWORD PTR SS:[RSP+30]                        |
-00007FF7413CCC0C | E8 4F 38 77 00              | CALL fallout4debug.7FF741B40460                      |
-00007FF7413CCC11 | 48 8D 4C 24 20              | LEA RCX,QWORD PTR SS:[RSP+20]                        |
-00007FF7413CCC16 | E8 15 7D 27 01              | CALL fallout4debug.7FF742644930                      |
-00007FF7413CCC1B | 48 8B 0D DE 93 3B 04        | MOV RCX,QWORD PTR DS:[7FF745786000]                  |
-00007FF7413CCC22 | B2 01                       | MOV DL,1                                             |
-00007FF7413CCC24 | E8 67 6E DB FE              | CALL fallout4debug.7FF740183A90                      | - The mods detection check itself.
-00007FF7413CCC29 | 84 C0                       | TEST AL,AL                                           | 
-00007FF7413CCC2B | 75 11                       | JNE fallout4debug.7FF7413CCC3E                       | - Jumps if mods are detected, skipping the awarding process. This is what I patch out (along with TEST AL,AL).
-00007FF7413CCC2D | E8 3E F2 0B 00              | CALL fallout4debug.7FF74148BE70                      |
-00007FF7413CCC32 | 8B D7                       | MOV EDX,EDI                                          | - Searching for these bytes.
-00007FF7413CCC34 | 4C 8B 00                    | MOV R8,QWORD PTR DS:[RAX]                            | - Searching for these bytes.
-00007FF7413CCC37 | 48 8B C8                    | MOV RCX,RAX                                          | - Searching for these bytes.
-00007FF7413CCC3A | 41 FF 50 28                 | CALL QWORD PTR DS:[R8+28]                            | - Searching for these bytes.
-00007FF7413CCC3E | 48 8B 9C 24 50 04 00 00     | MOV RBX,QWORD PTR SS:[RSP+450]                       | - Searching for these bytes.
-00007FF7413CCC46 | 48 81 C4 40 04 00 00        | ADD RSP,440                                          | - Then moving back 9 bytes (at first byte found) which lands us at 00007FF7413CCC29, and then write 4 NOPS. Achievements enabled.
-00007FF7413CCC4D | 5F                          | POP RDI                                              |
-00007FF7413CCC4E | C3                          | RET                                                  |
+Disassembly for Fallout 4:
+00007FF611157740 | 40 57                    | PUSH RDI                                                                      | << Patch with MOV AL, 0 + RET
+00007FF611157742 | 48 83 EC 30              | SUB RSP,30                                                                    |
+00007FF611157746 | 40 32 FF                 | XOR DIL,DIL                                                                   |
+00007FF611157749 | 84 D2                    | TEST DL,DL                                                                    |
+00007FF61115774B | 74 20                    | JE fallout4.7FF61115776D                                                      |
+00007FF61115774D | 48 8B 05 F4 66 82 05     | MOV RAX,QWORD PTR DS:[7FF61697DE48]                                           |
+00007FF611157754 | 48 85 C0                 | TEST RAX,RAX                                                                  |
+00007FF611157757 | 74 11                    | JE fallout4.7FF61115776A                                                      |
+00007FF611157759 | F6 80 02 0E 00 00 40     | TEST BYTE PTR DS:[RAX+E02],40                                                 |
+00007FF611157760 | 74 08                    | JE fallout4.7FF61115776A                                                      |
+00007FF611157762 | B0 01                    | MOV AL,1                                                                      |
+00007FF611157764 | 48 83 C4 30              | ADD RSP,30                                                                    |
+00007FF611157768 | 5F                       | POP RDI                                                                       |
+00007FF611157769 | C3                       | RET                                                                           |
+00007FF61115776A | 40 32 FF                 | XOR DIL,DIL                                                                   |
+00007FF61115776D | 48 89 5C 24 40           | MOV QWORD PTR SS:[RSP+40],RBX                                                 |
+00007FF611157772 | 48 89 6C 24 48           | MOV QWORD PTR SS:[RSP+48],RBP                                                 |
+00007FF611157777 | 8B A9 C0 0F 00 00        | MOV EBP,DWORD PTR DS:[RCX+FC0]                                                |
+00007FF61115777D | 4C 89 7C 24 20           | MOV QWORD PTR SS:[RSP+20],R15                                                 |
+00007FF611157782 | 41 BF 01 00 00 00        | MOV R15D,1                                                                    |
+00007FF611157788 | 41 8B DF                 | MOV EBX,R15D                                                                  |
+00007FF61115778B | 3B EB                    | CMP EBP,EBX                                                                   |
+00007FF61115778D | 76 76                    | JBE fallout4.7FF611157805                                                     |
+00007FF61115778F | 4C 89 74 24 28           | MOV QWORD PTR SS:[RSP+28],R14                                                 |
+00007FF611157794 | 4C 8D B1 D0 0F 00 00     | LEA R14,QWORD PTR DS:[RCX+FD0]                                                |
+00007FF61115779B | 48 89 74 24 50           | MOV QWORD PTR SS:[RSP+50],RSI                                                 |
+00007FF6111577A0 | 40 84 FF                 | TEST DIL,DIL                                                                  |
+00007FF6111577A3 | 75 3D                    | JNE fallout4.7FF6111577E2                                                     |
+00007FF6111577A5 | 85 DB                    | TEST EBX,EBX                                                                  |
+00007FF6111577A7 | 78 2F                    | JS fallout4.7FF6111577D8                                                      |
+00007FF6111577A9 | 81 FB FE 00 00 00        | CMP EBX,FE                                                                    |
+00007FF6111577AF | 77 27                    | JA fallout4.7FF6111577D8                                                      |
+00007FF6111577B1 | 49 8B 36                 | MOV RSI,QWORD PTR DS:[R14]                                                    |
+00007FF6111577B4 | 48 85 F6                 | TEST RSI,RSI                                                                  |
+00007FF6111577B7 | 74 1F                    | JE fallout4.7FF6111577D8                                                      |
+00007FF6111577B9 | 48 8B CE                 | MOV RCX,RSI                                                                   |
+00007FF6111577BC | E8 3F 77 01 00           | CALL fallout4.7FF61116EF00                                                    |
+00007FF6111577C1 | 3C FF                    | CMP AL,FF                                                                     |
+00007FF6111577C3 | 74 13                    | JE fallout4.7FF6111577D8                                                      |
+00007FF6111577C5 | 48 8D 4E 70              | LEA RCX,QWORD PTR DS:[RSI+70]                                                 |
+00007FF6111577C9 | E8 D2 CE 72 02           | CALL fallout4.7FF6138846A0                                                    |
+00007FF6111577CE | 40 0F B6 FF              | MOVZX EDI,DIL                                                                 |
+00007FF6111577D2 | 84 C0                    | TEST AL,AL                                                                    |
+00007FF6111577D4 | 41 0F 44 FF              | CMOVE EDI,R15D                                                                |
+00007FF6111577D8 | FF C3                    | INC EBX                                                                       |
+00007FF6111577DA | 49 83 C6 08              | ADD R14,8                                                                     |
+00007FF6111577DE | 3B DD                    | CMP EBX,EBP                                                                   |
+00007FF6111577E0 | 72 BE                    | JB fallout4.7FF6111577A0                                                      |
+00007FF6111577E2 | 48 8B 74 24 50           | MOV RSI,QWORD PTR SS:[RSP+50]                                                 |
+00007FF6111577E7 | 4C 8B 74 24 28           | MOV R14,QWORD PTR SS:[RSP+28]                                                 |
+00007FF6111577EC | 40 0F B6 C7              | MOVZX EAX,DIL                                                                 |
+00007FF6111577F0 | 48 8B 6C 24 48           | MOV RBP,QWORD PTR SS:[RSP+48]                                                 |
+00007FF6111577F5 | 48 8B 5C 24 40           | MOV RBX,QWORD PTR SS:[RSP+40]                                                 |
+00007FF6111577FA | 4C 8B 7C 24 20           | MOV R15,QWORD PTR SS:[RSP+20]                                                 |
+00007FF6111577FF | 48 83 C4 30              | ADD RSP,30                                                                    |
+00007FF611157803 | 5F                       | POP RDI                                                                       |
+00007FF611157804 | C3                       | RET                                                                           |
+00007FF611157805 | 40 0F B6 C7              | MOVZX EAX,DIL                                                                 |
+00007FF611157809 | EB E5                    | JMP fallout4.7FF6111577F0                                                     |
+
+Disassembly for Skyrim SE:
+00007FF77C28D7A0 | 40 57                    | PUSH RDI                                                                      | << Patch with MOV AL, 0 + RET
+00007FF77C28D7A2 | 41 56                    | PUSH R14                                                                      |
+00007FF77C28D7A4 | 48 83 EC 28              | SUB RSP,28                                                                    |
+00007FF77C28D7A8 | 40 32 FF                 | XOR DIL,DIL                                                                   |
+00007FF77C28D7AB | 4C 8B F1                 | MOV R14,RCX                                                                   |
+00007FF77C28D7AE | 84 D2                    | TEST DL,DL                                                                    |
+00007FF77C28D7B0 | 74 22                    | JE skyrimse.7FF77C28D7D4                                                      |
+00007FF77C28D7B2 | 48 8B 05 4F 87 D3 02     | MOV RAX,QWORD PTR DS:[7FF77EFC5F08]                                           |
+00007FF77C28D7B9 | 48 85 C0                 | TEST RAX,RAX                                                                  |
+00007FF77C28D7BC | 74 13                    | JE skyrimse.7FF77C28D7D1                                                      |
+00007FF77C28D7BE | F6 80 DD 0B 00 00 08     | TEST BYTE PTR DS:[RAX+BDD],8                                                  |
+00007FF77C28D7C5 | 74 0A                    | JE skyrimse.7FF77C28D7D1                                                      |
+00007FF77C28D7C7 | B0 01                    | MOV AL,1                                                                      |
+00007FF77C28D7C9 | 48 83 C4 28              | ADD RSP,28                                                                    |
+00007FF77C28D7CD | 41 5E                    | POP R14                                                                       |
+00007FF77C28D7CF | 5F                       | POP RDI                                                                       |
+00007FF77C28D7D0 | C3                       | RET                                                                           |
+00007FF77C28D7D1 | 40 32 FF                 | XOR DIL,DIL                                                                   |
+00007FF77C28D7D4 | 48 89 5C 24 40           | MOV QWORD PTR SS:[RSP+40],RBX                                                 |
+00007FF77C28D7D9 | 48 89 6C 24 48           | MOV QWORD PTR SS:[RSP+48],RBP                                                 |
+00007FF77C28D7DE | 8B A9 70 0D 00 00        | MOV EBP,DWORD PTR DS:[RCX+D70]                                                |
+00007FF77C28D7E4 | 4C 89 7C 24 20           | MOV QWORD PTR SS:[RSP+20],R15                                                 |
+00007FF77C28D7E9 | 41 BF 01 00 00 00        | MOV R15D,1                                                                    |
+00007FF77C28D7EF | 41 8B DF                 | MOV EBX,R15D                                                                  |
+00007FF77C28D7F2 | 3B EB                    | CMP EBP,EBX                                                                   |
+00007FF77C28D7F4 | 76 70                    | JBE skyrimse.7FF77C28D866                                                     |
+00007FF77C28D7F6 | 48 89 74 24 50           | MOV QWORD PTR SS:[RSP+50],RSI                                                 |
+00007FF77C28D7FB | 0F 1F 44 00 00           | NOP DWORD PTR DS:[RAX+RAX]                                                    |
+00007FF77C28D800 | 40 84 FF                 | TEST DIL,DIL                                                                  |
+00007FF77C28D803 | 75 41                    | JNE skyrimse.7FF77C28D846                                                     |
+00007FF77C28D805 | 85 DB                    | TEST EBX,EBX                                                                  |
+00007FF77C28D807 | 78 37                    | JS skyrimse.7FF77C28D840                                                      |
+00007FF77C28D809 | 81 FB FE 00 00 00        | CMP EBX,FE                                                                    |
+00007FF77C28D80F | 77 2F                    | JA skyrimse.7FF77C28D840                                                      |
+00007FF77C28D811 | 48 63 C3                 | MOVSXD RAX,EBX                                                                |
+00007FF77C28D814 | 49 8B B4 C6 78 0D 00 00  | MOV RSI,QWORD PTR DS:[R14+RAX*8+D78]                                          |
+00007FF77C28D81C | 48 85 F6                 | TEST RSI,RSI                                                                  |
+00007FF77C28D81F | 74 1F                    | JE skyrimse.7FF77C28D840                                                      |
+00007FF77C28D821 | 48 8B CE                 | MOV RCX,RSI                                                                   |
+00007FF77C28D824 | E8 57 C8 00 00           | CALL skyrimse.7FF77C29A080                                                    |
+00007FF77C28D829 | 3C FF                    | CMP AL,FF                                                                     |
+00007FF77C28D82B | 74 13                    | JE skyrimse.7FF77C28D840                                                      |
+00007FF77C28D82D | 48 8D 4E 58              | LEA RCX,QWORD PTR DS:[RSI+58]                                                 |
+00007FF77C28D831 | E8 0A 1D 18 01           | CALL skyrimse.7FF77D40F540                                                    |
+00007FF77C28D836 | 84 C0                    | TEST AL,AL                                                                    |
+00007FF77C28D838 | 40 0F B6 FF              | MOVZX EDI,DIL                                                                 |
+00007FF77C28D83C | 41 0F 44 FF              | CMOVE EDI,R15D                                                                |
+00007FF77C28D840 | FF C3                    | INC EBX                                                                       |
+00007FF77C28D842 | 3B DD                    | CMP EBX,EBP                                                                   |
+00007FF77C28D844 | 72 BA                    | JB skyrimse.7FF77C28D800                                                      |
+00007FF77C28D846 | 48 8B 74 24 50           | MOV RSI,QWORD PTR SS:[RSP+50]                                                 |
+00007FF77C28D84B | 40 0F B6 C7              | MOVZX EAX,DIL                                                                 |
+00007FF77C28D84F | 48 8B 6C 24 48           | MOV RBP,QWORD PTR SS:[RSP+48]                                                 |
+00007FF77C28D854 | 48 8B 5C 24 40           | MOV RBX,QWORD PTR SS:[RSP+40]                                                 |
+00007FF77C28D859 | 4C 8B 7C 24 20           | MOV R15,QWORD PTR SS:[RSP+20]                                                 |
+00007FF77C28D85E | 48 83 C4 28              | ADD RSP,28                                                                    |
+00007FF77C28D862 | 41 5E                    | POP R14                                                                       |
+00007FF77C28D864 | 5F                       | POP RDI                                                                       |
+00007FF77C28D865 | C3                       | RET                                                                           |
+00007FF77C28D866 | 40 0F B6 C7              | MOVZX EAX,DIL                                                                 |
+00007FF77C28D86A | EB E3                    | JMP skyrimse.7FF77C28D84F                                                     |

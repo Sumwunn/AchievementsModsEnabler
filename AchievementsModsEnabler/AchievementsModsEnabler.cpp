@@ -71,8 +71,8 @@ extern "C" __declspec(dllexport) int Setup() {
 
 	// Logging.
 	LPCTSTR LogFilePath = NULL;
-	LPCTSTR LogFilePath01 = L"AchievementsModsEnabler.log";
-	LPCTSTR LogFilePath02 = L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log";
+	LPCTSTR LogFilePath01 = L"AchievementsModsEnabler.log"; // Non-NMM log path.
+	LPCTSTR LogFilePath02 = L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log";  // NMM log path.
 
 	// Misc.
 	DWORD OldVP = NULL;
