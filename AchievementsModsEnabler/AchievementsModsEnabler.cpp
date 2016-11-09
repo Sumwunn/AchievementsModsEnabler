@@ -64,53 +64,57 @@ extern "C" __declspec(dllexport) int Setup() {
 	int SearchSize = NULL;
 	// The address we get from BinSearch.
 	void* PatchAddress = (void*)NULL;
-	// We need to go back 9 bytes so we land at the right address.
+	// We need to go back X bytes so we land at the right address.
 	int PatchAddressModifier = NULL;
 	int PatchAddressModifier01 = 0x29; // Fallout 4.
 	int PatchAddressModifier02 = 0x30; // Skyrim SE.
+
+	// Logging.
+	LPCTSTR LogFilePath = NULL;
+	LPCTSTR LogFilePath01 = L"AchievementsModsEnabler.log";
+	LPCTSTR LogFilePath02 = L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log";
 
 	// Misc.
 	DWORD OldVP = NULL;
 
 	//////// Setup Part 1 - Addresses & Logging ////////
 
-	// Open up fresh log file.
-	std::ofstream LogFile;
-
-	// Get module of target to writes hooks to.
+	// Get hModule of target to patch.
 	// Fallout4.exe
 	HMODULE TargetModule = GetModuleHandle(ExpectedProcess01);
 	if (TargetModule != NULL) {
+		// Setup custom addresses for detected process.
+		LogFilePath = LogFilePath01;
 		PatchAddressModifier = PatchAddressModifier01;
 		BytesToFind = BytesToFind01;
 		BytesPatch = BytesPatch01;
 		BytesToFindSize = sizeof BytesToFind01;
 		BytesPatchSize = sizeof BytesPatch01;
-		LogFile.open("AchievementsModsEnabler.log");
-		// Log file creation failed.
-		if (!LogFile) {
-			return -2;
-		}
 	}
 	// SkyrimSE.exe
 	else {
 		TargetModule = GetModuleHandle(ExpectedProcess02);
 		if (TargetModule != NULL) {
+			// Setup custom addresses for detected process.
+			LogFilePath = LogFilePath02;
 			PatchAddressModifier = PatchAddressModifier02;
 			BytesToFind = BytesToFind02;
 			BytesPatch = BytesPatch02;
 			BytesToFindSize = sizeof BytesToFind02;
 			BytesPatchSize = sizeof BytesPatch02;
-			LogFile.open("AchievementsModsEnabler.log");
-			// Log file creation failed.
-			if (!LogFile) {
-				return -2;
-			}
 		}
 		// No expected processes detected!
 		else if (TargetModule == NULL) {
 			return -1;
 		}
+	}
+
+	// Open up fresh log file.
+	std::ofstream LogFile;
+	LogFile.open(LogFilePath);
+	// Log file creation failed.
+	if (!LogFile) {
+		return -2;
 	}
 
 	// Get size and address of ExpectedProcess's .text section.
