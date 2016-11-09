@@ -33,6 +33,8 @@ extern "C" void* GetTextSectionAddr(HMODULE Module, int DataType);
 extern "C" int GetTextSectionSize(HMODULE Module, int DataType);
 
 // Return values
+// 0 = Patching failed, bytes not found.
+// 1 = Patching successful, bytes found.
 // -1 = Process is NOT expected target.
 // -2 = Log file creation failed.
 
@@ -46,7 +48,7 @@ extern "C" __declspec(dllexport) int Setup() {
 
 	LPCTSTR ExpectedProcess02 = L"SkyrimSE.exe";
 	// These bytes will land us just beneath where the achivements mods disabler code is at.
-	unsigned char BytesToFind02[] = { 0xC3, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48, 0x8B, 0xA9, 0x70, 0x0D, 0x00, 0x00 };
+	unsigned char BytesToFind02[] = { 0xC3, 0x40, 0x32, 0xFF, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48 };
 	// This is what we patch it with (check notes.txt).
 	unsigned char BytesPatch02[] = { 0xB0, 0x00, 0xC3 };
 
@@ -65,12 +67,15 @@ extern "C" __declspec(dllexport) int Setup() {
 	// We need to go back 9 bytes so we land at the right address.
 	int PatchAddressModifier = NULL;
 	int PatchAddressModifier01 = 0x29; // Fallout 4.
-	int PatchAddressModifier02 = 0x35; // Skyrim SE.
+	int PatchAddressModifier02 = 0x30; // Skyrim SE.
 
 	// Misc.
 	DWORD OldVP = NULL;
 
 	//////// Setup Part 1 - Addresses & Logging ////////
+
+	// Open up fresh log file.
+	std::ofstream LogFile;
 
 	// Get module of target to writes hooks to.
 	// Fallout4.exe
@@ -81,6 +86,11 @@ extern "C" __declspec(dllexport) int Setup() {
 		BytesPatch = BytesPatch01;
 		BytesToFindSize = sizeof BytesToFind01;
 		BytesPatchSize = sizeof BytesPatch01;
+		LogFile.open("AchievementsModsEnabler.log");
+		// Log file creation failed.
+		if (!LogFile) {
+			return -2;
+		}
 	}
 	// SkyrimSE.exe
 	else {
@@ -91,18 +101,16 @@ extern "C" __declspec(dllexport) int Setup() {
 			BytesPatch = BytesPatch02;
 			BytesToFindSize = sizeof BytesToFind02;
 			BytesPatchSize = sizeof BytesPatch02;
+			LogFile.open("AchievementsModsEnabler.log");
+			// Log file creation failed.
+			if (!LogFile) {
+				return -2;
+			}
 		}
+		// No expected processes detected!
 		else if (TargetModule == NULL) {
 			return -1;
 		}
-	}
-
-	// Open up fresh log file.
-	std::ofstream LogFile;
-	LogFile.open("AchievementsModsEnabler.log");
-	// Log file creation failed.
-	if (!LogFile) {
-		return -2;
 	}
 
 	// Get size and address of ExpectedProcess's .text section.
@@ -124,6 +132,9 @@ extern "C" __declspec(dllexport) int Setup() {
 		VirtualProtect(PatchAddress, BytesPatchSize, OldVP, &OldVP);
 		// Log message.
 		LogFile << "YES" << std::endl;
+		// Cleanup.
+		LogFile.close();
+		return 1;
 	}
 
 	// Cleanup.
