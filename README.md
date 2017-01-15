@@ -6,26 +6,15 @@ It's a plugin I made that re-enables achievements while using mods by patching F
 It's designed to be version independent.
 It also works on already modded saves!
 
-**How to install (Skyrim SE)**
+**How to install**
 
 1. Install my Dll Loader manually. (You will be prompted to install prior to download)
-2. Install this mod via NMM.
+2. Install this mod via NMM or drop the plugins folder in your games data folder.
 3. Play!
 
-**How to uninstall (Skyrim SE)**
+**How to uninstall**
 
-1. Uninstall via NMM.
-
-**How to install (Fallout 4)**
-
-1. Copy all the files from the download to Fallout 4's root folder (where Fallout4.exe is, refer to this if confused).
-2. Optional. If you're using True 3D Sound, first rename its dll to True3DSound.dll, download the compatibility file here and copy over it's dll, done.
-3. Read the notes.
-4. Play (you may need to restart Steam for the mod to work).
-
-**How to uninstall (Fallout 4)**
-
-1. Delete AchievementsModsEnabler.dll, AchievementsModsEnabler.dll_Exports.txt, X3DAudio1_7.dll & DllLoader.txt from Fallout 4's root folder.
+1. Uninstall via NMM or manually delete the files.
 
 **How do I know if it's working?**
 
