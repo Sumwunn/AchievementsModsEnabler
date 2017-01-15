@@ -66,15 +66,16 @@ extern "C" __declspec(dllexport) int Setup() {
 
 	//////// Setup Part 1 - Addresses & Logging ////////
 
+	// Open up fresh log file.
+	LogFileHandle.open(L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log");
+	// Log file creation failed.
+	if (!LogFileHandle) {
+		return -2;
+	}
+
 	// Fallout 4.
 	hModule = GetModuleHandle(ExpectedProcess01);
 	if (hModule != NULL) {
-		// Open up fresh log file.
-		LogFileHandle.open(L"AchievementsModsEnabler.log");
-		// Log file creation failed.
-		if (!LogFileHandle) {
-			return -2;
-		}
 		// Find bytes and patch them.
 		if (BinPatch(hModule, BytesToFind01, sizeof BytesToFind01, BytesPatch01, sizeof BytesPatch01, NULL, AddressModifierSub01) == 0) {
 			// Bytes not found!
@@ -97,12 +98,6 @@ extern "C" __declspec(dllexport) int Setup() {
 	// Skyrim SE.
 	hModule = GetModuleHandle(ExpectedProcess02);
 	if (hModule != NULL) {
-		// Open up fresh log file.
-		LogFileHandle.open(L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log");
-		// Log file creation failed.
-		if (!LogFileHandle) {
-			return -2;
-		}
 		// Find bytes and patch them.
 		if (BinPatch(hModule, BytesToFind02_01, sizeof BytesToFind02_01, BytesPatch02, sizeof BytesPatch02, NULL, AddressModifierSub02_01) == 0 &&
 			BinPatch(hModule, BytesToFind02_02, sizeof BytesToFind02_02, BytesPatch02, sizeof BytesPatch02, NULL, AddressModifierSub02_02) == 0) {
@@ -124,6 +119,10 @@ extern "C" __declspec(dllexport) int Setup() {
 	}
 
 	// Process not found.
+	// Cleanup.
+	// Log message.
+	LogFileHandle << "Fallout4.exe & SkyrimSE.exe not detected." << std::endl;
+	LogFileHandle.close();
 	return -1;
 }
 
