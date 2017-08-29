@@ -40,11 +40,12 @@ int BinPatch(HMODULE hModule, unsigned char* BytesToFind, int BytesToFindSize, u
 // -1 = Process is NOT expected target.
 // -2 = Log file creation failed.
 
-extern "C" __declspec(dllexport) int Setup() {
-
+extern "C" __declspec(dllexport) int Setup() 
+{
 	LPCTSTR ExpectedProcess01 = L"Fallout4.exe";
 	// These bytes will land us just beneath where the achivements mods disabler code is at.
-	unsigned char BytesToFind01[] = { 0xC3, 0x40, 0x32, 0xFF, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48 };
+	unsigned char BytesToFind01_01[] = { 0xC3, 0x40, 0x32, 0xFF, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48 };
+	unsigned char BytesToFind01_02[] = { 0xC3, 0xC6, 0x44, 0x24, 0x38, 0x00, 0x48, 0x8D, 0x44, 0x24, 0x38, 0x48, 0x89, 0x5C, 0x24, 0x20 };
 	// This is what we patch it with (check notes.txt).
 	unsigned char BytesPatch01[] = { 0xB0, 0x00, 0xC3 };
 
@@ -56,7 +57,8 @@ extern "C" __declspec(dllexport) int Setup() {
 	unsigned char BytesPatch02[] = { 0xB0, 0x00, 0xC3 };
 
 	// We need to go back X bytes so we land at the right address.
-	int AddressModifierSub01 = 0x29; // Fallout 4.
+	int AddressModifierSub01_01 = 0x29; // Fallout 4 pre-Creators Club update.
+	int AddressModifierSub01_02 = 0x28; // Fallout 4 Creators Club update.
 	int AddressModifierSub02_01 = 0x35; // Skyrim SE v1.1.
 	int AddressModifierSub02_02 = 0x30; // Skyrim SE v1.2.
 
@@ -69,15 +71,19 @@ extern "C" __declspec(dllexport) int Setup() {
 	// Open up fresh log file.
 	LogFileHandle.open(L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log");
 	// Log file creation failed.
-	if (!LogFileHandle) {
+	if (!LogFileHandle) 
+	{
 		return -2;
 	}
 
 	// Fallout 4.
 	hModule = GetModuleHandle(ExpectedProcess01);
-	if (hModule != NULL) {
+	if (hModule != NULL) 
+	{
 		// Find bytes and patch them.
-		if (BinPatch(hModule, BytesToFind01, sizeof BytesToFind01, BytesPatch01, sizeof BytesPatch01, NULL, AddressModifierSub01) == 0) {
+		if (BinPatch(hModule, BytesToFind01_01, sizeof BytesToFind01_01, BytesPatch01, sizeof BytesPatch01, NULL, AddressModifierSub01_01) == 0 &&
+			BinPatch(hModule, BytesToFind01_02, sizeof BytesToFind01_02, BytesPatch01, sizeof BytesPatch01, NULL, AddressModifierSub01_02) == 0)
+		{
 			// Bytes not found!
 			// Log message.
 			LogFileHandle << "NO" << std::endl;
@@ -85,7 +91,8 @@ extern "C" __declspec(dllexport) int Setup() {
 			LogFileHandle.close();
 			return 0;
 		}
-		else {
+		else 
+		{
 			// Bytes found!
 			// Log message.
 			LogFileHandle << "YES" << std::endl;
@@ -97,10 +104,12 @@ extern "C" __declspec(dllexport) int Setup() {
 
 	// Skyrim SE.
 	hModule = GetModuleHandle(ExpectedProcess02);
-	if (hModule != NULL) {
+	if (hModule != NULL) 
+	{
 		// Find bytes and patch them.
 		if (BinPatch(hModule, BytesToFind02_01, sizeof BytesToFind02_01, BytesPatch02, sizeof BytesPatch02, NULL, AddressModifierSub02_01) == 0 &&
-			BinPatch(hModule, BytesToFind02_02, sizeof BytesToFind02_02, BytesPatch02, sizeof BytesPatch02, NULL, AddressModifierSub02_02) == 0) {
+			BinPatch(hModule, BytesToFind02_02, sizeof BytesToFind02_02, BytesPatch02, sizeof BytesPatch02, NULL, AddressModifierSub02_02) == 0) 
+		{
 			// Bytes not found!
 			// Log message.
 			LogFileHandle << "NO" << std::endl;
@@ -108,7 +117,8 @@ extern "C" __declspec(dllexport) int Setup() {
 			LogFileHandle.close();
 			return 0;
 		}
-		else {
+		else 
+		{
 			// Bytes found!
 			// Log message.
 			LogFileHandle << "YES" << std::endl;
@@ -126,8 +136,8 @@ extern "C" __declspec(dllexport) int Setup() {
 	return -1;
 }
 
-int BinPatch(HMODULE hModule, unsigned char* BytesToFind, int BytesToFindSize, unsigned char* BytesPatch, int BytesPatchSize, int AddressModifierAdd, int AddressModifierSub) { // BinSearch + MEMCPY patching.
-
+int BinPatch(HMODULE hModule, unsigned char* BytesToFind, int BytesToFindSize, unsigned char* BytesPatch, int BytesPatchSize, int AddressModifierAdd, int AddressModifierSub) // BinSearch + MEMCPY patching.
+{
 	// The address we get from GetTextSectionAddr.
 	void* SearchAddress = (void*)NULL;
 	// The size too.
@@ -142,12 +152,14 @@ int BinPatch(HMODULE hModule, unsigned char* BytesToFind, int BytesToFindSize, u
 	SearchAddress = GetTextSectionAddr(hModule, 2);
 	// Get address and patch it.
 	PatchAddress = BinSearch(SearchAddress, SearchSize, BytesToFind, BytesToFindSize, AddressModifierAdd, AddressModifierSub);
-	if (PatchAddress == NULL) {
+	if (PatchAddress == NULL) 
+	{
 		// Bytes not found.
 		return 0;
 	}
 	// Bytes found!
-	else {
+	else 
+	{
 		// Patch it! (with NOPS)
 		VirtualProtect(PatchAddress, BytesPatchSize, PAGE_EXECUTE_READWRITE, &lpflOldProtect);
 		memcpy(PatchAddress, BytesPatch, BytesPatchSize);
