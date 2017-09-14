@@ -29,13 +29,16 @@ Probably not! I've designed this to be version independent.
 However in the case that it does, I will have it fixed very quickly.
 Below is a list of Fallout 4 & Skyrim SE versions that have been tested and working.
 
-**Fallout 4 tested & working versions: w/ 1.0.0.2**
+**Fallout 4 tested & working versions: w/ 1.0.0.7+**
 
+- 1.10.20.0.0
+- 1.9.4.0.1
 - 1.8.7.0.0
 - 1.7.22.0
 
-**Skyrim SE tested & working versions w/ 1.0.0.5::**
+**Skyrim SE tested & working versions w/ 1.0.0.7+**
 
+- 1.4.2.0.8
 - 1.3.9.0.8
 - 1.3.5.0.8
 - 1.2.39.0.8
@@ -51,7 +54,7 @@ Skyrim SE: http://www.nexusmods.com/skyrimspecialedition/mods/245/?
 
 **Compile Notes**
 
-- HJWasm must be setup before opening the project.
+- HJWasm must be setup before opening the project. (instructions require updating, bare with me)
 
 **NOTES**
 
@@ -60,8 +63,8 @@ Skyrim SE: http://www.nexusmods.com/skyrimspecialedition/mods/245/?
 - If your save is already modded, you'll have to save again to order for the [M] to disappear.
 - This will not get you VAC banned in any manner as Skyrim SE does not use any anti-cheat.
 - If the mod is not working, try restarting Steam and/or your computer.
-- This does not use SKSE. It will also not conflict with it.
-- Written in C++/ASM (Visual Studio 2015 & HJWasm).
+- The dll loader version does not use SKSE. It will also not conflict with it.
+- Written in C++/ASM (Visual Studio & HJWasm).
 
 **CREDITS**
 
@@ -69,6 +72,6 @@ Bethesda for Fallout 4. (https://store.steampowered.com/app/377160/)
 
 Bethesda for Skyrim SE. (http://store.steampowered.com/app/489830/)
 
-Microsoft for Visual Studio 2015. (https://www.visualstudio.com/)
+Microsoft for Visual Studio. (https://www.visualstudio.com/)
 
 The HJWasm devs. (https://github.com/Terraspace/HJWasm)
