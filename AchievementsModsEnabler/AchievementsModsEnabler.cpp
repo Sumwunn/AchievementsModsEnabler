@@ -1,6 +1,6 @@
 /*                             The MIT License (MIT)
 
-Copyright (c) 2016 Sumwunn @ github.com
+Copyright (c) 2017 Sumwunn @ github.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -40,7 +40,9 @@ int BinPatch(HMODULE hModule, unsigned char* BytesToFind, int BytesToFindSize, u
 // -1 = Process is NOT expected target.
 // -2 = Log file creation failed.
 
-extern "C" __declspec(dllexport) int Setup() 
+extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType = 0)
+// ScriptExtenderType
+// 0 = None. 1 = (reserved). 2 = SKSE64.
 {
 	LPCTSTR ExpectedProcess01 = L"Fallout4.exe";
 	// These bytes will land us just beneath where the achivements mods disabler code is at.
@@ -69,7 +71,15 @@ extern "C" __declspec(dllexport) int Setup()
 	//////// Setup Part 1 - Addresses & Logging ////////
 
 	// Open up fresh log file.
-	LogFileHandle.open(L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log");
+	if (ScriptExtenderType == 0) // Dll loader path.
+	{
+		LogFileHandle.open(L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log");
+	}
+	else if (ScriptExtenderType == 2) // SKSE64 path.
+	{
+		LogFileHandle.open(L"Data\\SKSE\\Plugins\\AchievementsModsEnabler.log");
+	}
+
 	// Log file creation failed.
 	if (!LogFileHandle) 
 	{
@@ -169,3 +179,25 @@ int BinPatch(HMODULE hModule, unsigned char* BytesToFind, int BytesToFindSize, u
 
 	return 0;
 }
+
+#ifdef _SKSE64_
+////// SKSE64 //////
+#include "common\IPrefix.h"
+#include "skse64\PluginAPI.h"
+
+extern "C" __declspec(dllexport) bool SKSEPlugin_Query(const SKSEInterface * skse, PluginInfo * info)
+{
+	info->infoVersion = PluginInfo::kInfoVersion;
+	info->name = "AchievementsModsEnabler";
+	info->version = 1;
+
+	return TRUE;
+}
+
+extern "C" __declspec(dllexport) bool SKSEPlugin_Load(const SKSEInterface * skse)
+{
+	Setup(2);
+
+	return TRUE;
+}
+#endif
