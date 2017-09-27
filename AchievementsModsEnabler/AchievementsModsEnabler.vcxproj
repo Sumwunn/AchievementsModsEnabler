@@ -105,7 +105,6 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <HJWASM>
       <PreprocessorDefinitions>_WIN64</PreprocessorDefinitions>

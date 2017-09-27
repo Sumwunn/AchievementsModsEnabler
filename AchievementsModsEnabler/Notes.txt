@@ -123,3 +123,67 @@ Disassembly for Skyrim SE:
 00007FF77C28D865 | C3                       | RET                                                                           |
 00007FF77C28D866 | 40 0F B6 C7              | MOVZX EAX,DIL                                                                 |
 00007FF77C28D86A | EB E3                    | JMP skyrimse.7FF77C28D84F                                                     |
+
+Creation Club Update:
+
+Disassembly for Fallout 4:
+00007FF6136C7CF0 | 48 83 EC 28                            | SUB RSP,28                                                              |
+00007FF6136C7CF4 | C6 44 24 38 00                         | MOV BYTE PTR SS:[RSP+38],0                                              |
+00007FF6136C7CF9 | 84 D2                                  | TEST DL,DL                                                              |
+00007FF6136C7CFB | 74 21                                  | JE fallout4_dump.7FF6136C7D1E                                           |
+00007FF6136C7CFD | 48 8B 05 F4 A9 9A 05                   | MOV RAX,QWORD PTR DS:[7FF6190726F8]                                     | rax:EntryPoint
+00007FF6136C7D04 | 48 85 C0                               | TEST RAX,RAX                                                            | rax:EntryPoint
+00007FF6136C7D07 | 74 10                                  | JE fallout4_dump.7FF6136C7D19                                           |
+00007FF6136C7D09 | F6 80 02 0E 00 00 40                   | TEST BYTE PTR DS:[RAX+E02],40                                           |
+00007FF6136C7D10 | 74 07                                  | JE fallout4_dump.7FF6136C7D19                                           |
+00007FF6136C7D12 | B0 01                                  | MOV AL,1                                                                |
+00007FF6136C7D14 | 48 83 C4 28                            | ADD RSP,28                                                              |
+00007FF6136C7D18 | C3                                     | RET                                                                     |
+00007FF6136C7D19 | C6 44 24 38 00                         | MOV BYTE PTR SS:[RSP+38],0                                              |
+00007FF6136C7D1E | 48 8D 44 24 38                         | LEA RAX,QWORD PTR SS:[RSP+38]                                           | rax:EntryPoint
+00007FF6136C7D23 | 48 89 5C 24 20                         | MOV QWORD PTR SS:[RSP+20],RBX                                           |
+00007FF6136C7D28 | 48 8D 99 C0 0F 00 00                   | LEA RBX,QWORD PTR DS:[RCX+FC0]                                          |
+00007FF6136C7D2F | 48 8D 54 24 40                         | LEA RDX,QWORD PTR SS:[RSP+40]                                           | rdx:EntryPoint
+00007FF6136C7D34 | 48 8B CB                               | MOV RCX,RBX                                                             |
+00007FF6136C7D37 | 48 89 44 24 40                         | MOV QWORD PTR SS:[RSP+40],RAX                                           | rax:EntryPoint
+00007FF6136C7D3C | E8 5F 87 00 00                         | CALL fallout4_dump.7FF6136D04A0                                         |
+00007FF6136C7D41 | 83 F8 01                               | CMP EAX,1                                                               |
+00007FF6136C7D44 | 75 0E                                  | JNE fallout4_dump.7FF6136C7D54                                          |
+00007FF6136C7D46 | 48 8D 4B 18                            | LEA RCX,QWORD PTR DS:[RBX+18]                                           |
+00007FF6136C7D4A | 48 8D 54 24 40                         | LEA RDX,QWORD PTR SS:[RSP+40]                                           | rdx:EntryPoint
+00007FF6136C7D4F | E8 4C 87 00 00                         | CALL fallout4_dump.7FF6136D04A0                                         |
+00007FF6136C7D54 | 0F B6 44 24 38                         | MOVZX EAX,BYTE PTR SS:[RSP+38]                                          |
+00007FF6136C7D59 | 48 8B 5C 24 20                         | MOV RBX,QWORD PTR SS:[RSP+20]                                           |
+00007FF6136C7D5E | 48 83 C4 28                            | ADD RSP,28                                                              |
+00007FF6136C7D62 | C3                                     | RET                                                                     |
+
+Disassembly for Skyrim SE:
+00007FF7DF9CF3E0 | 48 83 EC 28                            | SUB RSP,28                                                              | << Patch with MOV AL, 0 + RET
+00007FF7DF9CF3E4 | C6 44 24 38 00                         | MOV BYTE PTR SS:[RSP+38],0                                              |
+00007FF7DF9CF3E9 | 84 D2                                  | TEST DL,DL                                                              |
+00007FF7DF9CF3EB | 74 21                                  | JE skyrimse.7FF7DF9CF40E                                                |
+00007FF7DF9CF3ED | 48 8B 05 64 10 DD 02                   | MOV RAX,QWORD PTR DS:[7FF7E27A0458]                                     |
+00007FF7DF9CF3F4 | 48 85 C0                               | TEST RAX,RAX                                                            |
+00007FF7DF9CF3F7 | 74 10                                  | JE skyrimse.7FF7DF9CF409                                                |
+00007FF7DF9CF3F9 | F6 80 DD 0B 00 00 08                   | TEST BYTE PTR DS:[RAX+BDD],8                                            |
+00007FF7DF9CF400 | 74 07                                  | JE skyrimse.7FF7DF9CF409                                                |
+00007FF7DF9CF402 | B0 01                                  | MOV AL,1                                                                |
+00007FF7DF9CF404 | 48 83 C4 28                            | ADD RSP,28                                                              |
+00007FF7DF9CF408 | C3                                     | RET                                                                     |
+00007FF7DF9CF409 | C6 44 24 38 00                         | MOV BYTE PTR SS:[RSP+38],0                                              |
+00007FF7DF9CF40E | 48 8D 44 24 38                         | LEA RAX,QWORD PTR SS:[RSP+38]                                           |
+00007FF7DF9CF413 | 48 89 5C 24 20                         | MOV QWORD PTR SS:[RSP+20],RBX                                           |
+00007FF7DF9CF418 | 48 8D 99 70 0D 00 00                   | LEA RBX,QWORD PTR DS:[RCX+D70]                                          |
+00007FF7DF9CF41F | 48 89 44 24 40                         | MOV QWORD PTR SS:[RSP+40],RAX                                           |
+00007FF7DF9CF424 | 48 8B CB                               | MOV RCX,RBX                                                             |
+00007FF7DF9CF427 | 48 8D 54 24 40                         | LEA RDX,QWORD PTR SS:[RSP+40]                                           | rdx:DbgUiRemoteBreakin
+00007FF7DF9CF42C | E8 EF 50 00 00                         | CALL skyrimse.7FF7DF9D4520                                              |
+00007FF7DF9CF431 | 83 F8 01                               | CMP EAX,1                                                               |
+00007FF7DF9CF434 | 75 0E                                  | JNE skyrimse.7FF7DF9CF444                                               |
+00007FF7DF9CF436 | 48 8D 4B 18                            | LEA RCX,QWORD PTR DS:[RBX+18]                                           |
+00007FF7DF9CF43A | 48 8D 54 24 40                         | LEA RDX,QWORD PTR SS:[RSP+40]                                           | rdx:DbgUiRemoteBreakin
+00007FF7DF9CF43F | E8 DC 50 00 00                         | CALL skyrimse.7FF7DF9D4520                                              |
+00007FF7DF9CF444 | 0F B6 44 24 38                         | MOVZX EAX,BYTE PTR SS:[RSP+38]                                          |
+00007FF7DF9CF449 | 48 8B 5C 24 20                         | MOV RBX,QWORD PTR SS:[RSP+20]                                           |
+00007FF7DF9CF44E | 48 83 C4 28                            | ADD RSP,28                                                              |
+00007FF7DF9CF452 | C3                                     | RET                                                                     |

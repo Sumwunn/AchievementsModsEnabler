@@ -40,9 +40,9 @@ int BinPatch(HMODULE hModule, unsigned char* BytesToFind, int BytesToFindSize, u
 // -1 = Process is NOT expected target.
 // -2 = Log file creation failed.
 
-extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType = 0)
+extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 // ScriptExtenderType
-// 0 = None. 1 = (reserved). 2 = SKSE64.
+// 1 = (reserved). 2 = SKSE64.
 {
 	LPCTSTR ExpectedProcess01 = L"Fallout4.exe";
 	// These bytes will land us just beneath where the achivements mods disabler code is at.
@@ -51,18 +51,22 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType = 0)
 	// This is what we patch it with (check notes.txt).
 	unsigned char BytesPatch01[] = { 0xB0, 0x00, 0xC3 };
 
+	// We need to go back X bytes so we land at the right address.
+	int AddressModifierSub01_01 = 0x29; // Fallout 4 pre-Creators Club update (pre-v1.10).
+	int AddressModifierSub01_02 = 0x28; // Fallout 4 Creators Club update (v1.10).
+
 	LPCTSTR ExpectedProcess02 = L"SkyrimSE.exe";
 	// These bytes will land us just beneath where the achivements mods disabler code is at.
 	unsigned char BytesToFind02_01[] = { 0xC3, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48, 0x8B, 0xA9, 0x70, 0x0D, 0x00, 0x00 }; // Skyrim SE v1.1.
-	unsigned char BytesToFind02_02[] = { 0xC3, 0x40, 0x32, 0xFF, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48 }; // Skyrim SE v1.2.
+	unsigned char BytesToFind02_02[] = { 0xC3, 0x40, 0x32, 0xFF, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48 }; // Skyrim SE v1.2+.
+	unsigned char BytesToFind02_03[] = { 0xC3, 0xC6, 0x44, 0x24, 0x38, 0x00, 0x48, 0x8D, 0x44, 0x24, 0x38, 0x48, 0x89, 0x5C, 0x24, 0x20 }; // Skyrim SE Creators Club update (v1.5.3.0).
 	// This is what we patch it with (check notes.txt).
 	unsigned char BytesPatch02[] = { 0xB0, 0x00, 0xC3 };
 
 	// We need to go back X bytes so we land at the right address.
-	int AddressModifierSub01_01 = 0x29; // Fallout 4 pre-Creators Club update.
-	int AddressModifierSub01_02 = 0x28; // Fallout 4 Creators Club update.
 	int AddressModifierSub02_01 = 0x35; // Skyrim SE v1.1.
-	int AddressModifierSub02_02 = 0x30; // Skyrim SE v1.2.
+	int AddressModifierSub02_02 = 0x30; // Skyrim SE v1.2+.
+	int AddressModifierSub02_03 = 0x28; // Skyrim SE Creators Club update (v1.5.3.0).
 
 	// Misc.
 	HMODULE hModule = NULL;
@@ -71,13 +75,13 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType = 0)
 	//////// Setup Part 1 - Addresses & Logging ////////
 
 	// Open up fresh log file.
-	if (ScriptExtenderType == 0) // Dll loader path.
-	{
-		LogFileHandle.open(L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log");
-	}
-	else if (ScriptExtenderType == 2) // SKSE64 path.
+	if (ScriptExtenderType == 2) // SKSE64 path.
 	{
 		LogFileHandle.open(L"Data\\SKSE\\Plugins\\AchievementsModsEnabler.log");
+	}
+	else // Dll loader path.
+	{
+		LogFileHandle.open(L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log");
 	}
 
 	// Log file creation failed.
@@ -118,7 +122,8 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType = 0)
 	{
 		// Find bytes and patch them.
 		if (BinPatch(hModule, BytesToFind02_01, sizeof BytesToFind02_01, BytesPatch02, sizeof BytesPatch02, NULL, AddressModifierSub02_01) == 0 &&
-			BinPatch(hModule, BytesToFind02_02, sizeof BytesToFind02_02, BytesPatch02, sizeof BytesPatch02, NULL, AddressModifierSub02_02) == 0) 
+			BinPatch(hModule, BytesToFind02_02, sizeof BytesToFind02_02, BytesPatch02, sizeof BytesPatch02, NULL, AddressModifierSub02_02) == 0 &&
+			BinPatch(hModule, BytesToFind02_03, sizeof BytesToFind02_03, BytesPatch02, sizeof BytesPatch02, NULL, AddressModifierSub02_03) == 0)
 		{
 			// Bytes not found!
 			// Log message.
