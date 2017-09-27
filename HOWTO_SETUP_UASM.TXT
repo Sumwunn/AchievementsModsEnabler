@@ -1,0 +1,4 @@
+You'll need to integrate UASM into Visual Studio 2017.
+Download UASM 32-bit (http://www.terraspace.co.uk/uasm.html#p2) and open UasmTargets.zip, copy it's contents to C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\BuildCustomizations (default path).
+Rename uasm32.exe to uasm.exe and copy it to C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86 (default path).
+Done. My project will now open and compile.

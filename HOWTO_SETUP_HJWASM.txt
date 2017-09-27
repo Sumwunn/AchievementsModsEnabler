@@ -1,4 +1,0 @@
-You'll need to integrate HJWasm into Visual Studio 2015.
-Download HJWasm and open HJWasmTargets.zip, copy it's contents to C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\BuildCustomizations (default path).
-Now copy HJWASM.exe to C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin (default path).
-Done.
