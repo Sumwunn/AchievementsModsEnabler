@@ -24,6 +24,7 @@ It also works on already modded saves!
 You'll get no achievement warnings, and the [M] will won't appear in the saves menu (already modded saves will need to be re-saved for [M] to disappear), alternatively you can check the log just to be sure.
 
 After you've started Skyrim SE (you can alt-tab for this part), go to Data\Plugins\Sumwunn (for SKSE64: Data\SKSE\Plugins), there's a log file called: AchievementsModsEnabler.log
+
 It will either say "YES" or "NO". Indicating whether or not the plugin successfully patched game. So if it says NO, lemme know!
 
 **Will it need updating?**
