@@ -8,13 +8,16 @@ It also works on already modded saves!
 
 **How to install**
 
-1. Install my Dll Loader manually. (You will be prompted to install prior to download)
-2. Install this mod via NMM or drop the plugins folder in your games data folder.
+1. Install my Dll Loader manually -OR- SKSE64.
+2. If using the dll loader version: copy the plugin folder to Skyrim SE's Data folder.
+3. If using the SKSE64 version: copy the SKSE folder to Skyrim SE's Data folder.
 3. Play!
 
 **How to uninstall**
 
-1. Uninstall via NMM or manually delete the files.
+1. Uninstall via NMM or manually:
+- If using dll loader version, delete AchievementsModsEnabler.dll & AchievementsModsEnabler.dll_Exports.txt from Data\Plugins\Sumwunn.
+- If using SKSE64 version, delete AchievementsModsEnabler.dll from Data\SKSE\Plugins.
 
 **How do I know if it's working?**
 
@@ -29,15 +32,16 @@ Probably not! I've designed this to be version independent.
 However in the case that it does, I will have it fixed very quickly.
 Below is a list of Fallout 4 & Skyrim SE versions that have been tested and working.
 
-**Fallout 4 tested & working versions: w/ 1.0.0.7+**
+**Fallout 4 tested & working versions: w/ 1.0.0.8+**
 
 - 1.10.20.0.0
 - 1.9.4.0.1
 - 1.8.7.0.0
 - 1.7.22.0
 
-**Skyrim SE tested & working versions w/ 1.0.0.7+**
+**Skyrim SE tested & working versions w/ 1.0.0.8+**
 
+- 1.5.3.0.8
 - 1.4.2.0.8
 - 1.3.9.0.8
 - 1.3.5.0.8
@@ -54,7 +58,7 @@ Skyrim SE: http://www.nexusmods.com/skyrimspecialedition/mods/245/?
 
 **Compile Notes**
 
-- HJWasm must be setup before opening the project. (instructions require updating, bare with me)
+- UASM must be setup before opening the project.
 
 **NOTES**
 
@@ -64,7 +68,7 @@ Skyrim SE: http://www.nexusmods.com/skyrimspecialedition/mods/245/?
 - This will not get you VAC banned in any manner as Skyrim SE does not use any anti-cheat.
 - If the mod is not working, try restarting Steam and/or your computer.
 - The dll loader version does not use SKSE. It will also not conflict with it.
-- Written in C++/ASM (Visual Studio & HJWasm).
+- Written in C++/ASM.
 
 **CREDITS**
 
@@ -74,4 +78,4 @@ Bethesda for Skyrim SE. (http://store.steampowered.com/app/489830/)
 
 Microsoft for Visual Studio. (https://www.visualstudio.com/)
 
-The HJWasm devs. (https://github.com/Terraspace/HJWasm)
+The UASM devs. (https://github.com/Terraspace/UASM)
