@@ -1,6 +1,6 @@
 /*                             The MIT License (MIT)
 
-Copyright (c) 2017 Sumwunn @ github.com
+Copyright (c) 2016 Sumwunn @ github.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -58,8 +58,8 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 	LPCTSTR ExpectedProcess02 = L"SkyrimSE.exe";
 	// These bytes will land us just beneath where the achivements mods disabler code is at.
 	unsigned char BytesToFind02_01[] = { 0xC3, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48, 0x8B, 0xA9, 0x70, 0x0D, 0x00, 0x00 }; // Skyrim SE v1.1.
-	unsigned char BytesToFind02_02[] = { 0xC3, 0x40, 0x32, 0xFF, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48 }; // Skyrim SE v1.2+.
-	unsigned char BytesToFind02_03[] = { 0xC3, 0xC6, 0x44, 0x24, 0x38, 0x00, 0x48, 0x8D, 0x44, 0x24, 0x38, 0x48, 0x89, 0x5C, 0x24, 0x20 }; // Skyrim SE Creators Club update (v1.5.3.0).
+	unsigned char BytesToFind02_02[] = { 0xC3, 0x40, 0x32, 0xFF, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48 }; // Skyrim SE v1.2.
+	unsigned char BytesToFind02_03[] = { 0xC3, 0xC6, 0x44, 0x24, 0x38, 0x00, 0x48, 0x8D, 0x44, 0x24, 0x38, 0x48, 0x89, 0x5C, 0x24, 0x20 };
 	// This is what we patch it with (check notes.txt).
 	unsigned char BytesPatch02[] = { 0xB0, 0x00, 0xC3 };
 
@@ -68,56 +68,114 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 	int AddressModifierSub02_02 = 0x30; // Skyrim SE v1.2+.
 	int AddressModifierSub02_03 = 0x28; // Skyrim SE Creators Club update (v1.5.3.0).
 
+	//////// Setup Part 1 - Config ////////
+
+	TCHAR ConfigFilePath[MAX_PATH];
+	int iEnableLogging = 1;
+	// 0 = Disable.
+	// 1 = Enable.
+	int iIgnoreExpectedProcessName = 0;
+	// 0 = Expected process name detection enabled.
+	// 1 = Ignore Fallout4.exe name detection. Allows mod to work regardless of EXE name.
+	// 2 = Ignore SkyrimSE.exe name detection. Allows mod to work regardless of EXE name.
+
+	// Get config path.
+	GetCurrentDirectory(MAX_PATH, ConfigFilePath);
+	if (ScriptExtenderType == 2) // SKSE64 path.
+	{
+		_tcscat_s(ConfigFilePath, MAX_PATH, L"\\Data\\SKSE\\Plugins\\AchievementsModsEnabler.ini");
+	}
+	else // Dll loader path.
+	{
+		_tcscat_s(ConfigFilePath, MAX_PATH, L"\\Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.ini");
+	}
+	// Get config settings.
+	iEnableLogging = GetPrivateProfileInt(L"General", L"iEnableLogging", 1, ConfigFilePath);
+	iIgnoreExpectedProcessName = GetPrivateProfileInt(L"General", L"iIgnoreExpectedProcessName", 0, ConfigFilePath);
+
+	// Checking for incorrect values.
+	if (iEnableLogging < 0 || iEnableLogging > 1)
+	{
+		iEnableLogging = 1;
+	}
+	if (iIgnoreExpectedProcessName < 0 || iIgnoreExpectedProcessName > 2)
+	{
+		iIgnoreExpectedProcessName = 0;
+	}
+
 	// Misc.
 	HMODULE hModule = NULL;
 	std::ofstream LogFileHandle;
 
-	//////// Setup Part 1 - Addresses & Logging ////////
+	//////// Setup Part 2 - Addresses & Logging ////////
 
-	// Open up fresh log file.
-	if (ScriptExtenderType == 2) // SKSE64 path.
+	if (iEnableLogging == 1) 
 	{
-		LogFileHandle.open(L"Data\\SKSE\\Plugins\\AchievementsModsEnabler.log");
-	}
-	else // Dll loader path.
-	{
-		LogFileHandle.open(L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log");
-	}
+		// Open up fresh log file.
+		if (ScriptExtenderType == 2) // SKSE64 path.
+		{
+			LogFileHandle.open(L"Data\\SKSE\\Plugins\\AchievementsModsEnabler.log");
+		}
+		else // Dll loader path.
+		{
+			LogFileHandle.open(L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log");
+		}
 
-	// Log file creation failed.
-	if (!LogFileHandle) 
-	{
-		return -2;
+		// Log file creation failed.
+		if (!LogFileHandle)
+		{
+			return -2;
+		}
 	}
 
 	// Fallout 4.
-	hModule = GetModuleHandle(ExpectedProcess01);
+	if (iIgnoreExpectedProcessName == 1) 
+	{
+		hModule = GetModuleHandle(NULL);
+	}
+	else 
+	{
+		hModule = GetModuleHandle(ExpectedProcess01);
+	}
 	if (hModule != NULL) 
 	{
 		// Find bytes and patch them.
 		if (BinPatch(hModule, BytesToFind01_01, sizeof BytesToFind01_01, BytesPatch01, sizeof BytesPatch01, NULL, AddressModifierSub01_01) == 0 &&
 			BinPatch(hModule, BytesToFind01_02, sizeof BytesToFind01_02, BytesPatch01, sizeof BytesPatch01, NULL, AddressModifierSub01_02) == 0)
 		{
-			// Bytes not found!
-			// Log message.
-			LogFileHandle << "NO" << std::endl;
-			// Cleanup.
-			LogFileHandle.close();
+			if (iEnableLogging == 1)
+			{
+				// Bytes not found!
+				// Log message.
+				LogFileHandle << "NO" << std::endl;
+				// Cleanup.
+				LogFileHandle.close();
+			}
 			return 0;
 		}
-		else 
+		else
 		{
-			// Bytes found!
-			// Log message.
-			LogFileHandle << "YES" << std::endl;
-			// Cleanup.
-			LogFileHandle.close();
+			if (iEnableLogging == 1)
+			{
+				// Bytes found!
+				// Log message.
+				LogFileHandle << "YES" << std::endl;
+				// Cleanup.
+				LogFileHandle.close();
+			}
 			return 1;
 		}
 	}
-
+	
 	// Skyrim SE.
-	hModule = GetModuleHandle(ExpectedProcess02);
+	if (iIgnoreExpectedProcessName == 2)
+	{
+		hModule = GetModuleHandle(NULL);
+	}
+	else
+	{
+		hModule = GetModuleHandle(ExpectedProcess02);
+	}
 	if (hModule != NULL) 
 	{
 		// Find bytes and patch them.
@@ -125,29 +183,38 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 			BinPatch(hModule, BytesToFind02_02, sizeof BytesToFind02_02, BytesPatch02, sizeof BytesPatch02, NULL, AddressModifierSub02_02) == 0 &&
 			BinPatch(hModule, BytesToFind02_03, sizeof BytesToFind02_03, BytesPatch02, sizeof BytesPatch02, NULL, AddressModifierSub02_03) == 0)
 		{
-			// Bytes not found!
-			// Log message.
-			LogFileHandle << "NO" << std::endl;
-			// Cleanup.
-			LogFileHandle.close();
+			if (iEnableLogging == 1)
+			{
+				// Bytes not found!
+				// Log message.
+				LogFileHandle << "NO" << std::endl;
+				// Cleanup.
+				LogFileHandle.close();
+			}
 			return 0;
 		}
-		else 
+		else
 		{
-			// Bytes found!
-			// Log message.
-			LogFileHandle << "YES" << std::endl;
-			// Cleanup.
-			LogFileHandle.close();
+			if (iEnableLogging == 1)
+			{
+				// Bytes found!
+				// Log message.
+				LogFileHandle << "YES" << std::endl;
+				// Cleanup.
+				LogFileHandle.close();
+			}
 			return 1;
 		}
 	}
 
-	// Process not found.
-	// Cleanup.
-	// Log message.
-	LogFileHandle << "Fallout4.exe & SkyrimSE.exe not detected." << std::endl;
-	LogFileHandle.close();
+	if (iEnableLogging == 1)
+	{
+		// Process not found.
+		// Cleanup.
+		// Log message.
+		LogFileHandle << "Fallout4.exe & SkyrimSE.exe not detected." << std::endl;
+		LogFileHandle.close();
+	}
 	return -1;
 }
 
