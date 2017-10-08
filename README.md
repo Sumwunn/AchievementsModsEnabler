@@ -16,8 +16,20 @@ It also works on already modded saves!
 **How to uninstall**
 
 1. Uninstall via NMM or manually:
-- If using dll loader version, delete AchievementsModsEnabler.dll & AchievementsModsEnabler.dll_Exports.txt from Data\Plugins\Sumwunn.
-- If using SKSE64 version, delete AchievementsModsEnabler.dll from Data\SKSE\Plugins.
+- If using dll loader version, delete AchievementsModsEnabler.dll, AchievementsModsEnabler.dll_Exports.txt & AchievementsModsEnabler.ini from Data\Plugins\Sumwunn.
+- If using SKSE64 version, delete AchievementsModsEnabler.dll & AchievementsModsEnabler.ini from Data\SKSE\Plugins.
+
+Options:
+
+AchievementsModsEnabler.ini located in Data\Plugins\Sumwunn contains these options:
+
+- iEnableLogging=1
+- 0 = Disabled.
+- 1 = Enabled.
+- iIgnoreExpectedProcessName=0
+- 0 = Expected process name detection enabled.
+- 1 = Ignore Fallout4.exe name detection. Allows mod to work regardless of EXE name.
+- 2 = Ignore SkyrimSE.exe name detection. Allows mod to work regardless of EXE name.
 
 **How do I know if it's working?**
 
