@@ -22,7 +22,7 @@
     <ProjectGuid>{C14903C1-2C86-4764-8D5A-B76B986DA50B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>AchievementsModsEnabler</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

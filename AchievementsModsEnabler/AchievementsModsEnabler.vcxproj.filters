@@ -51,8 +51,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <HJWASM Include="Misc.asm">
-      <Filter>Source Files\ASM</Filter>
-    </HJWASM>
+    <UASM Include="Misc.asm">
+      <Filter>Source Files</Filter>
+    </UASM>
   </ItemGroup>
 </Project>

@@ -50,6 +50,8 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 	unsigned char BytesToFind01_02[] = { 0xC3, 0xC6, 0x44, 0x24, 0x38, 0x00, 0x48, 0x8D, 0x44, 0x24, 0x38, 0x48, 0x89, 0x5C, 0x24, 0x20 };
 	// This is what we patch it with (check notes.txt).
 	unsigned char BytesPatch01[] = { 0xB0, 0x00, 0xC3 };
+	// VR.
+	LPCTSTR ExpectedProcess01_VR = L"Fallout4VR.exe";
 
 	// We need to go back X bytes so we land at the right address.
 	int AddressModifierSub01_01 = 0x29; // Fallout 4 pre-Creators Club update (pre-v1.10).
@@ -62,6 +64,8 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 	unsigned char BytesToFind02_03[] = { 0xC3, 0xC6, 0x44, 0x24, 0x38, 0x00, 0x48, 0x8D, 0x44, 0x24, 0x38, 0x48, 0x89, 0x5C, 0x24, 0x20 };
 	// This is what we patch it with (check notes.txt).
 	unsigned char BytesPatch02[] = { 0xB0, 0x00, 0xC3 };
+	// VR.
+	LPCTSTR ExpectedProcess02_VR = L"SkyrimVR.exe";
 
 	// We need to go back X bytes so we land at the right address.
 	int AddressModifierSub02_01 = 0x35; // Skyrim SE v1.1.
@@ -136,6 +140,10 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 	else 
 	{
 		hModule = GetModuleHandle(ExpectedProcess01);
+		if (hModule == NULL)
+		{
+			hModule = GetModuleHandle(ExpectedProcess01_VR);
+		}
 	}
 	if (hModule != NULL) 
 	{
@@ -175,6 +183,10 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 	else
 	{
 		hModule = GetModuleHandle(ExpectedProcess02);
+		if (hModule == NULL) 
+		{
+			hModule = GetModuleHandle(ExpectedProcess02_VR);
+		}
 	}
 	if (hModule != NULL) 
 	{
