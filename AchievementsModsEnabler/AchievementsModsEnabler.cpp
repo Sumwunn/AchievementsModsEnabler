@@ -1,6 +1,6 @@
 /*                             The MIT License (MIT)
 
-Copyright (c) 2016 Sumwunn @ github.com
+Copyright (c) 2018 Sumwunn @ github.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -22,17 +22,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 #include "stdafx.h"
 #include <windows.h>
 #include <fstream>
-#include <iostream>
-#include <string>
 
 // Defined functions.
 // ASM
 extern "C" void* BinSearch(void* Search, int SearchLength, unsigned char* Bytes, int BytesLength, int AddMod, int SubMod);
 // Work around because my ASM function GetTextSectionData has multiple return value data types.
-extern "C" void* GetTextSectionAddr(HMODULE Module, int DataType);
-extern "C" int GetTextSectionSize(HMODULE Module, int DataType);
+extern "C" void* GetTEXTSectionAddr(HMODULE Module, int DataType);
+extern "C" int GetTEXTSectionSize(HMODULE Module, int DataType);
 // C++
 int BinPatch(HMODULE hModule, unsigned char* BytesToFind, int BytesToFindSize, unsigned char* BytesPatch, int BytesPatchSize, int AddressModifierAdd, int AddressModifierSub);
+
+// Data.
+// ScriptExtenderType
+// 0 = None.
+// 1 = Fallout 4. 
+// 2 = Skyrim SE.
+int ScriptExtenderType = 0;
 
 // Return values
 // 0 = Patching failed, bytes not found.
@@ -40,9 +45,7 @@ int BinPatch(HMODULE hModule, unsigned char* BytesToFind, int BytesToFindSize, u
 // -1 = Process is NOT expected target.
 // -2 = Log file creation failed.
 
-extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
-// ScriptExtenderType
-// 1 = (reserved). 2 = SKSE64.
+extern "C" __declspec(dllexport) int Setup()
 {
 	LPCTSTR ExpectedProcess01 = L"Fallout4.exe";
 	// These bytes will land us just beneath where the achivements mods disabler code is at.
@@ -70,7 +73,7 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 	// We need to go back X bytes so we land at the right address.
 	int AddressModifierSub02_01 = 0x35; // Skyrim SE v1.1.
 	int AddressModifierSub02_02 = 0x30; // Skyrim SE v1.2+.
-	int AddressModifierSub02_03 = 0x28; // Skyrim SE Creators Club update (v1.5.3.0).
+	int AddressModifierSub02_03 = 0x28; // Skyrim SE Creators Club update (v1.5.3.0+).
 
 	//////// Setup Part 1 - Config ////////
 
@@ -85,14 +88,8 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 
 	// Get config path.
 	GetCurrentDirectory(MAX_PATH, ConfigFilePath);
-	if (ScriptExtenderType == 2) // SKSE64 path.
-	{
-		_tcscat_s(ConfigFilePath, MAX_PATH, L"\\Data\\SKSE\\Plugins\\AchievementsModsEnabler.ini");
-	}
-	else // Dll loader path.
-	{
-		_tcscat_s(ConfigFilePath, MAX_PATH, L"\\Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.ini");
-	}
+	// Dll loader path.
+	_tcscat_s(ConfigFilePath, MAX_PATH, L"\\Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.ini");
 	// Get config settings.
 	iEnableLogging = GetPrivateProfileInt(L"General", L"iEnableLogging", 1, ConfigFilePath);
 	iIgnoreExpectedProcessName = GetPrivateProfileInt(L"General", L"iIgnoreExpectedProcessName", 0, ConfigFilePath);
@@ -116,14 +113,7 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 	if (iEnableLogging == 1) 
 	{
 		// Open up fresh log file.
-		if (ScriptExtenderType == 2) // SKSE64 path.
-		{
-			LogFileHandle.open(L"Data\\SKSE\\Plugins\\AchievementsModsEnabler.log");
-		}
-		else // Dll loader path.
-		{
-			LogFileHandle.open(L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log");
-		}
+		LogFileHandle.open(L"Data\\Plugins\\Sumwunn\\AchievementsModsEnabler.log");
 
 		// Log file creation failed.
 		if (!LogFileHandle)
@@ -133,7 +123,7 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 	}
 
 	// Fallout 4.
-	if (iIgnoreExpectedProcessName == 1) 
+	if (iIgnoreExpectedProcessName == 1 || ScriptExtenderType == 1) 
 	{
 		hModule = GetModuleHandle(NULL);
 	}
@@ -176,7 +166,7 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 	}
 	
 	// Skyrim SE.
-	if (iIgnoreExpectedProcessName == 2)
+	if (iIgnoreExpectedProcessName == 2 || ScriptExtenderType == 2)
 	{
 		hModule = GetModuleHandle(NULL);
 	}
@@ -227,6 +217,7 @@ extern "C" __declspec(dllexport) int Setup(int ScriptExtenderType)
 		LogFileHandle << "Fallout4.exe & SkyrimSE.exe not detected." << std::endl;
 		LogFileHandle.close();
 	}
+
 	return -1;
 }
 
@@ -242,8 +233,8 @@ int BinPatch(HMODULE hModule, unsigned char* BytesToFind, int BytesToFindSize, u
 	DWORD lpflOldProtect = NULL;
 
 	// Get size and address of ExpectedProcess's .text section.
-	SearchSize = GetTextSectionSize(hModule, 1);
-	SearchAddress = GetTextSectionAddr(hModule, 2);
+	SearchSize = GetTEXTSectionSize(hModule, 1);
+	SearchAddress = GetTEXTSectionAddr(hModule, 2);
 	// Get address and patch it.
 	PatchAddress = BinSearch(SearchAddress, SearchSize, BytesToFind, BytesToFindSize, AddressModifierAdd, AddressModifierSub);
 	if (PatchAddress == NULL) 
@@ -264,24 +255,21 @@ int BinPatch(HMODULE hModule, unsigned char* BytesToFind, int BytesToFindSize, u
 	return 0;
 }
 
-#ifdef _SKSE64_
-////// SKSE64 //////
-#include "common\IPrefix.h"
-#include "skse64\PluginAPI.h"
-
-extern "C" __declspec(dllexport) bool SKSEPlugin_Query(const SKSEInterface * skse, PluginInfo * info)
+////// Script Extender //////
+// Valid Types.
+// 0 = None.
+// 1 = Fallout 4. 
+// 2 = Skyrim SE.
+extern "C" __declspec(dllexport) void SetF4SEMode()
 {
-	info->infoVersion = PluginInfo::kInfoVersion;
-	info->name = "AchievementsModsEnabler";
-	info->version = 1;
+	ScriptExtenderType = 1;
 
-	return TRUE;
+	return;
 }
 
-extern "C" __declspec(dllexport) bool SKSEPlugin_Load(const SKSEInterface * skse)
+extern "C" __declspec(dllexport) void SetSKSEMode()
 {
-	Setup(2);
+	ScriptExtenderType = 2;
 
-	return TRUE;
+	return;
 }
-#endif
