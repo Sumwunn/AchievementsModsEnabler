@@ -52,16 +52,19 @@ Below is a list of Fallout 4 & Skyrim SE versions that have been tested and work
 - 1.8.7.0.0
 - 1.7.22.0
 
-**Skyrim SE tested & working versions w/ 1.0.0.8+**
+**Skyrim AE Tested & working versions w/ 1.0.1.2+:**
+- 1.6.318.0
 
-- 1.5.3.0.8
-- 1.4.2.0.8
-- 1.3.9.0.8
-- 1.3.5.0.8
-- 1.2.39.0.8
-- 1.2.36.0.8
-- 1.1.51.0.8
-- 1.1.47.0.8
+**Skyrim SE Tested & working versions w/ 1.0.0.8 - 1.0.1.1+:**
+- 1.5.39.0
+- 1.5.3.0
+- 1.4.2.0
+- 1.3.9.0
+- 1.3.5.0
+- 1.2.39.0
+- 1.2.36.0
+- 1.1.51.0
+- 1.1.47.0
 
 **Discussion**: 
 
