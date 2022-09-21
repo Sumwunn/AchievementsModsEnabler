@@ -1,6 +1,6 @@
 /*                             The MIT License (MIT)
 
-Copyright (c) 2021 Sumwunn @ github.com
+Copyright (C) 2022 Sumwunn @ GitHub.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
@@ -131,7 +131,7 @@ extern "C" __declspec(dllexport) int Setup()
 	////////////////////////////////
 	////////// FALLOUT 4 //////////
 	//////////////////////////////
-	if (ignoreProcessName || ScriptExtenderType == 1) 
+	if (ignoreProcessName || ScriptExtenderType == 1)
 	{
 		hModule = GetModuleHandle(NULL);
 	}

@@ -140,7 +140,7 @@
       <ConformanceMode>true</ConformanceMode>
       <DebugInformationFormat>None</DebugInformationFormat>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>R:\Projects\Libraries\skse64_2_01_02\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>R:\Projects\Libraries\skse64_2_02_01\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
