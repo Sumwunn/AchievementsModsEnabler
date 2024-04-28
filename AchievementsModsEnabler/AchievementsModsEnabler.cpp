@@ -53,14 +53,17 @@ extern "C" __declspec(dllexport) int Setup()
 
 	LPCTSTR ExpectedProcess01 = L"Fallout4.exe";
 	// These bytes will land us just beneath where the achivements mods disabler code is at
-	unsigned char BytesToFind01_01[] = { 0xC3, 0x40, 0x32, 0xFF, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48 };
-	unsigned char BytesToFind01_02[] = { 0xC3, 0xC6, 0x44, 0x24, 0x38, 0x00, 0x48, 0x8D, 0x44, 0x24, 0x38, 0x48, 0x89, 0x5C, 0x24, 0x20 };
+	// I should move these into an array..
+	unsigned char BytesToFind01_01[] = { 0xC3, 0x40, 0x32, 0xFF, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48 }; // Fallout 4 pre - Creators Club update(pre - v1.10)
+	unsigned char BytesToFind01_02[] = { 0xC3, 0xC6, 0x44, 0x24, 0x38, 0x00, 0x48, 0x8D, 0x44, 0x24, 0x38, 0x48, 0x89, 0x5C, 0x24, 0x20 }; // Fallout 4 Creators Club update (v1.10)
+	unsigned char BytesToFind01_03[] = { 0x48, 0x83, 0xEC, 0x28, 0xC6, 0x44, 0x24, 0x38, 0x00, 0x84, 0xD2, 0x74, 0x1C, 0x48 }; /// Fallout 4 Next Gen (v1.10.980)
 	// VR.
 	LPCTSTR ExpectedProcess01_VR = L"Fallout4VR.exe";
 
 	// We need to go back X bytes so we land at the right address
 	int AddressModifierSub01_01 = 0x29; // Fallout 4 pre-Creators Club update (pre-v1.10)
 	int AddressModifierSub01_02 = 0x28; // Fallout 4 Creators Club update (v1.10)
+	int AddressModifierSub01_03 = 0x0; // Fallout 4 Next Gen (v1.10.980)
 
 	////////////////////////////////
 	////////// SKYRIM SE //////////
@@ -71,8 +74,8 @@ extern "C" __declspec(dllexport) int Setup()
 	unsigned char BytesToFind02_01[] = { 0xC3, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48, 0x8B, 0xA9, 0x70, 0x0D, 0x00, 0x00 }; // Skyrim SE v1.1
 	unsigned char BytesToFind02_02[] = { 0xC3, 0x40, 0x32, 0xFF, 0x48, 0x89, 0x5C, 0x24, 0x40, 0x48, 0x89, 0x6C, 0x24, 0x48 }; // Skyrim SE v1.2
 	unsigned char BytesToFind02_03[] = { 0xC3, 0xC6, 0x44, 0x24, 0x38, 0x00, 0x48, 0x8D, 0x44, 0x24, 0x38, 0x48, 0x89, 0x5C, 0x24, 0x20 }; // Skyrim SE Creators Club update (v1.5.3.0+)
-	unsigned char BytesToFind02_04[] = { 0x48, 0x83, 0xEC, 0x28, 0xC6, 0x44, 0x24, 0x38, 0x00, 0x84, 0xD2, 0x74, 0x1C };  // Skyrim AE update (v1.6.318.0+)
-	unsigned char BytesToFind02_05[] = { 0x0F, 0xB6, 0x44, 0x24, 0x38, 0x48, 0x8B, 0x5C, 0x24, 0x20, 0x48, 0x83, 0xC4, 0x28, 0xC3 };  // Skyrim AE update (v1.6.318.0+) alternative
+	unsigned char BytesToFind02_04[] = { 0x48, 0x83, 0xEC, 0x28, 0xC6, 0x44, 0x24, 0x38, 0x00, 0x84, 0xD2, 0x74, 0x1C }; // Skyrim AE update (v1.6.318.0+)
+	unsigned char BytesToFind02_05[] = { 0x0F, 0xB6, 0x44, 0x24, 0x38, 0x48, 0x8B, 0x5C, 0x24, 0x20, 0x48, 0x83, 0xC4, 0x28, 0xC3 }; // Skyrim AE update (v1.6.318.0+) alternative
 
 	// VR.
 	LPCTSTR ExpectedProcess02_VR = L"SkyrimVR.exe";
@@ -115,7 +118,6 @@ extern "C" __declspec(dllexport) int Setup()
 	std::ofstream LogFileHandle;
 
 	//////// Setup Part 2 - Addresses & Logging ////////
-
 	if (enableLogging) 
 	{
 		// Open up fresh log file
@@ -147,7 +149,8 @@ extern "C" __declspec(dllexport) int Setup()
 	{
 		// Find bytes and patch them
 		if (!BinPatch(hModule, BytesToFind01_01, sizeof BytesToFind01_01, BytesPatch, sizeof BytesPatch, NULL, AddressModifierSub01_01) &&
-			!BinPatch(hModule, BytesToFind01_02, sizeof BytesToFind01_02, BytesPatch, sizeof BytesPatch, NULL, AddressModifierSub01_02))
+			!BinPatch(hModule, BytesToFind01_02, sizeof BytesToFind01_02, BytesPatch, sizeof BytesPatch, NULL, AddressModifierSub01_02) &&
+			!BinPatch(hModule, BytesToFind01_03, sizeof BytesToFind01_03, BytesPatch, sizeof BytesPatch, NULL, AddressModifierSub01_03))
 		{
 			if (enableLogging)
 			{
