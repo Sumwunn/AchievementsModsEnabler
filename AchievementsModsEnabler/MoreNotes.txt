@@ -1,0 +1,11 @@
+Fallout 4 (Creation Club), HookNotes.txt Function Details (RIP 0x0):
+
+Base ESM's & DLC's
+- RCX+0xFC0+0x10 = Loaded plugin count (zero upon first call)
+- [RCX+0xFC0] = Loaded plugin data address array
+- [RCX] = Specific Loaded plugin data
+
+Creation Club & Mods
+- RCX+0xFC0+0x20 = Loaded plugin count
+- [RCX+0xFD8] = Loaded plugin data address array
+- [RCX+0x18h] = Specific Loaded plugin data

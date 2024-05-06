@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Notes.txt" />
+    <Text Include="MoreNotes.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AchievementsModsEnabler.rc">

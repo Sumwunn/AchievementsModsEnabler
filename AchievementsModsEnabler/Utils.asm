@@ -1,6 +1,6 @@
 ;                              The MIT License (MIT)
 ; 
-; Copyright (C) 2022 Sumwunn @ GitHub.com
+; Copyright (C) 2024 Sumwunn @ GitHub.com
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy of
 ; this software and associated documentation files (the "Software"), to deal in
@@ -27,218 +27,7 @@ IFDEF _WIN32
 .MODEL FLAT, C
 OPTION CASEMAP:NONE
 
-EXTERN VirtualProtect@16: PROTO
-
-.data?
-
-OldVP DWORD ?
-
 .code
-
-; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
-
-HookWrite proc HookAddress:DWORD, HookDestination:DWORD
-
-push offset OldVP
-push 40h
-push 20h
-push [HookAddress]
-call VirtualProtect@16
-
-; Construct Hook.
-mov eax, [HookAddress]
-mov byte ptr [eax], 0B8h
-mov edx, [HookDestination]
-mov dword ptr [eax+1], edx
-mov word ptr [eax+5], 0E0FFh
-
-push offset OldVP
-push [OldVP]
-push 20h
-push [HookAddress]
-call VirtualProtect@16
-
-ret
-
-HookWrite endp
-
-; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
-
-GetTEXTSectionAddr proc
-
-jmp GetTEXTSectionData
-
-GetTEXTSectionAddr endp
-
-; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
-
-GetTEXTSectionSize proc
-
-jmp GetTEXTSectionData
-
-GetTEXTSectionSize endp
-
-; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
-
-GetTEXTSectionData proc Module:DWORD, DataType:DWORD
-
-; 1 = Section VirtualSize
-; 2 = Section VirtualAddress
-
-; Get imagebase.
-mov ecx, [Module]
-; Get PE header.
-mov eax, [ecx+3Ch]
-add ecx, eax
-
-.if [DataType] == 1
-; Get .TEXT section VirtualSize.
-mov eax, [ecx+100h]
-ret
-.elseif [DataType] == 2
-; Get .TEXT section VirtualAddress.
-mov eax, [ecx+104h]
-; Make it an actual VirtualAddress.
-add eax, [Module]
-ret
-.endif
-
-xor eax, eax
-ret
-
-GetTEXTSectionData endp
-
-; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
-
-GetRDATASectionAddr proc
-
-jmp GetRDATASectionData
-
-GetRDATASectionAddr endp
-
-; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
-
-GetRDATASectionSize proc
-
-jmp GetRDATASectionData
-
-GetRDATASectionSize endp
-
-; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
-
-GetRDATASectionData proc Module:DWORD, DataType:DWORD
-
-; 1 = Section VirtualSize
-; 2 = Section VirtualAddress
-
-; Get imagebase.
-mov ecx, [Module]
-; Get PE header.
-mov eax, [ecx+3Ch]
-add ecx, eax
-
-.if [DataType] == 1
-; Get .rdata section VirtualSize.
-mov eax, [ecx+128h]
-ret
-.elseif [DataType] == 2
-; Get .rdata section VirtualAddress.
-mov eax, [ecx+12Ch]
-; Make it an actual VirtualAddress.
-add eax, [Module]
-ret
-.endif
-
-xor eax, eax
-ret
-
-GetRDATASectionData endp
-
-; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
-
-BinSearch proc uses ebx esi edi SearchAddress:DWORD, SearchLength:DWORD, BytesAddress:DWORD, BytesLength:DWORD, AddMod:DWORD, SubMod:DWORD
-
-; Setup Search.
-mov ecx, [SearchAddress]
-; Get end of Search.
-mov edx, [SearchLength]
-add edx, ecx
-; Setup Bytes.
-mov esi, [BytesAddress]
-; Get the end of Bytes.
-mov edi, [BytesLength]
-add edi, esi
-; Setup the first bytes.
-mov bl, byte ptr [ecx]
-mov bh, byte ptr [esi]
-; Reset bytes found counter.
-xor eax, eax
-
-Begin:
-; Find first byte.
-.while bl != bh
-; Prevent overrread of Search & Bytes.
-cmp ecx, edx
-jnle NothingFound
-cmp esi, edi
-jnle NothingFound
-; Next byte.
-inc ecx
-; Load next byte.
-mov bl, byte ptr [ecx]
-.endw
-; Increment bytes found counter.
-inc eax
-; Next bytes.
-inc ecx
-inc esi
-; Load next bytes.
-mov bl, byte ptr [ecx]
-mov bh, byte ptr [esi]
-
-; First byte found, find the rest of the bytes.
-.while bl == bh
-; Prevent overrread of Search & Bytes.
-cmp ecx, edx
-jnle NothingFound
-cmp esi, edi
-jnle NothingFound
-; Next bytes.
-inc eax
-inc ecx
-inc esi
-; Load next bytes.
-mov bl, byte ptr [ecx]
-mov bh, byte ptr [esi]
-; If all bytes found, return address of which the first byte was found.
-.if eax == [BytesLength]
-; Rewind address.
-sub ecx, eax
-; Apply modifiers.
-mov eax, [AddMod]
-add ecx, eax
-mov eax, [SubMod]
-sub ecx, eax
-; Return address.
-mov eax, ecx
-ret
-.endif
-.endw
-
-; Bytes not found, reset Bytes & jump back to StepOne.
-sub esi, eax ; Rewind Bytes.
-xor eax, eax
-inc ecx
-; Load next bytes.
-mov bl, byte ptr [ecx]
-mov bh, byte ptr [esi]
-jmp Begin
-
-NothingFound:
-xor eax, eax
-ret
-
-BinSearch endp
 
 ; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
 
@@ -251,6 +40,7 @@ IFDEF _WIN64
 .x64
 OPTION CASEMAP:NONE
 OPTION FRAME:AUTO
+OPTION STACKBASE:RSP
 OPTION WIN64:11
 
 VirtualProtect PROTO :QWORD, :DWORD, :DWORD, :QWORD
@@ -263,18 +53,39 @@ OldVP DWORD ?
 
 ; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
 
+apiHook_Older proc frame
+
+mov al, 0
+
+ret
+
+apiHook_Older endp
+
+; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+
+apiHook_Newer proc frame
+
+mov byte ptr [RSP+0x10],0
+movzx eax, byte ptr [RSP+0x10]
+
+ret
+
+apiHook_Newer endp
+
+; ¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤
+
 HookWrite proc frame HookAddress:QWORD, HookDestination:QWORD
 
-invoke VirtualProtect, [HookAddress], 20, 40h, addr OldVP
+invoke VirtualProtect, HookAddress, 20, 40h, addr OldVP
 
-; Construct Hook.
+; Construct Hook
 mov rax, [HookAddress]
 mov word ptr [rax], 0B848h
 mov rdx, [HookDestination]
 mov qword ptr [rax+2], rdx
 mov word ptr [rax+0Ah], 0E0FFh
 
-invoke VirtualProtect, [HookAddress], 20, [OldVP], addr OldVP
+invoke VirtualProtect, HookAddress, 20, [OldVP], addr OldVP
 
 ret
 
